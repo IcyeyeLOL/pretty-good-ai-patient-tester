@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Voice Interview — Dev Console</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #161920;
+    --surface2: #1e222d;
+    --border: #2a2f3d;
+    --text: #e2e4ed;
+    --muted: #6b7280;
+    --accent: #6366f1;
+    --accent-dim: #3730a3;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --radius: 8px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  header h1 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+
+  .badge {
+    background: var(--accent-dim);
+    color: #a5b4fc;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .server-status {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  .dot.online { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot.offline { background: var(--red); }
+
+  main {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    height: calc(100vh - 53px);
+  }
+
+  /* LEFT PANEL */
+  .panel-left {
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+  }
+
+  .panel-header h2 {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 5px 12px;
+    font-size: 11px;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: background 0.15s, opacity 0.15s;
+  }
+  .btn:hover { background: #5254e7; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-sm {
+    padding: 3px 10px;
+    font-size: 10px;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+
+  .btn-danger {
+    background: transparent;
+    border: 1px solid var(--red);
+    color: var(--red);
+  }
+  .btn-danger:hover { background: rgba(239,68,68,0.1); }
+
+  .scenario-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+  }
+
+  .scenario-item {
+    padding: 10px 12px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    margin-bottom: 4px;
+    transition: all 0.15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .scenario-item:hover { background: var(--surface2); border-color: var(--border); }
+  .scenario-item.active { background: var(--surface2); border-color: var(--accent); }
+
+  .scenario-id {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 10px;
+    color: var(--muted);
+    min-width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .scenario-info { flex: 1; min-width: 0; }
+
+  .scenario-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .scenario-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 3px;
+  }
+
+  .severity-pill {
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .severity-high { background: rgba(239,68,68,0.15); color: #f87171; }
+  .severity-medium { background: rgba(234,179,8,0.15); color: #fbbf24; }
+  .severity-low { background: rgba(34,197,94,0.15); color: #4ade80; }
+
+  .last-verdict {
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .verdict-PASS { background: rgba(34,197,94,0.12); color: #4ade80; }
+  .verdict-WEAKNESS { background: rgba(234,179,8,0.12); color: #fbbf24; }
+  .verdict-BUG { background: rgba(239,68,68,0.12); color: #f87171; }
+  .verdict-ERROR { background: rgba(107,114,128,0.12); color: #9ca3af; }
+
+  /* RIGHT PANEL */
+  .panel-right {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    padding: 0 16px;
+  }
+
+  .tab {
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .tab-content {
+    flex: 1;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+  }
+  .tab-content.active { display: flex; }
+
+  /* SCENARIO DETAIL */
+  .detail-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+  }
+
+  .detail-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .detail-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .detail-subtitle {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .detail-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .card-text {
+    color: var(--text);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  .bug-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .bug-list li {
+    padding: 5px 0;
+    color: var(--text);
+    font-size: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .bug-list li::before {
+    content: '→';
+    color: var(--red);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* CALL STATUS */
+  .status-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    min-height: 42px;
+  }
+
+  .status-label { font-weight: 600; color: var(--text); }
+
+  .status-pill {
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .status-idle { background: var(--surface2); color: var(--muted); }
+  .status-calling { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .status-in-progress { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+  .status-transcribing { background: rgba(234,179,8,0.15); color: #fbbf24; }
+  .status-judging { background: rgba(234,179,8,0.15); color: #fbbf24; }
+  .status-done { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .status-error { background: rgba(239,68,68,0.15); color: #f87171; }
+
+  /* TRANSCRIPT */
+  .transcript-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+  }
+
+  .turn {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .turn-speaker {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    min-width: 60px;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+  .turn-speaker.agent { color: var(--blue); }
+  .turn-speaker.patient { color: var(--green); }
+
+  .turn-bubble {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    font-size: 12px;
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .turn-time {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* JUDGE OUTPUT */
+  .judge-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+  }
+
+  .verdict-banner {
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    border: 1px solid;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .verdict-banner.PASS { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.3); }
+  .verdict-banner.WEAKNESS { background: rgba(234,179,8,0.08); border-color: rgba(234,179,8,0.3); }
+  .verdict-banner.BUG { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.3); }
+  .verdict-banner.ERROR { background: rgba(107,114,128,0.08); border-color: rgba(107,114,128,0.3); }
+
+  .verdict-icon { font-size: 28px; }
+  .verdict-label { font-size: 20px; font-weight: 700; }
+  .verdict-banner.PASS .verdict-label { color: var(--green); }
+  .verdict-banner.WEAKNESS .verdict-label { color: var(--yellow); }
+  .verdict-banner.BUG .verdict-label { color: var(--red); }
+  .verdict-banner.ERROR .verdict-label { color: var(--muted); }
+  .verdict-summary { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    align-items: start;
+  }
+  .field-row:last-child { border-bottom: none; }
+  .field-key { color: var(--muted); font-weight: 600; }
+  .field-val { color: var(--text); word-break: break-word; }
+
+  blockquote.evidence {
+    border-left: 3px solid var(--accent);
+    padding: 8px 14px;
+    margin: 8px 0;
+    background: rgba(99,102,241,0.06);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-style: italic;
+    color: #a5b4fc;
+    font-size: 12px;
+  }
+
+  /* RUNS TAB */
+  .runs-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+  }
+
+  .run-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    gap: 12px;
+    align-items: center;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .run-row:hover { border-color: var(--accent); }
+
+  .run-scenario { font-size: 12px; font-weight: 500; }
+  .run-sid { font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .run-time { font-size: 10px; color: var(--muted); }
+
+  /* REPORT TAB */
+  .report-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+  }
+
+  .report-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  pre.report-text {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* EMPTY STATES */
+  .empty {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 32px; margin-bottom: 12px; }
+  .empty-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  .empty-sub { font-size: 12px; }
+
+  /* SPINNER */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    flex-shrink: 0;
+  }
+
+  /* SCROLLBARS */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  .hidden { display: none !important; }
+
+  .run-all-bar {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    background: var(--surface);
+  }
+
+  .progress-row {
+    padding: 6px 0;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AI Voice Interview</h1>
+  <span class="badge">Dev Console</span>
+  <div class="server-status">
+    <div class="dot" id="serverDot"></div>
+    <span id="serverLabel">checking...</span>
+  </div>
+</header>
+
+<main>
+  <!-- LEFT: SCENARIO LIST -->
+  <div class="panel-left">
+    <div class="panel-header">
+      <h2>Scenarios</h2>
+      <button class="btn btn-sm btn-ghost" onclick="refreshAll()">↻ Refresh</button>
+    </div>
+    <div class="scenario-list" id="scenarioList">
+      <div class="empty"><div class="empty-icon">⏳</div><div class="empty-sub">Loading...</div></div>
+    </div>
+    <div class="run-all-bar">
+      <button class="btn" style="flex:1" id="runAllBtn" onclick="runAll()">▶ Run All Scenarios</button>
+    </div>
+  </div>
+
+  <!-- RIGHT: TABS -->
+  <div class="panel-right">
+    <div class="tabs">
+      <div class="tab active" data-tab="scenario" onclick="switchTab('scenario')">Scenario</div>
+      <div class="tab" data-tab="transcript" onclick="switchTab('transcript')">Transcript</div>
+      <div class="tab" data-tab="judge" onclick="switchTab('judge')">Judge</div>
+      <div class="tab" data-tab="runs" onclick="switchTab('runs')">All Runs</div>
+      <div class="tab" data-tab="report" onclick="switchTab('report')">Bug Report</div>
+    </div>
+
+    <!-- SCENARIO TAB -->
+    <div class="tab-content active" id="tab-scenario">
+      <div class="status-bar" id="statusBar">
+        <span class="status-pill status-idle">idle</span>
+        <span>Select a scenario to begin</span>
+      </div>
+      <div class="detail-area" id="detailArea">
+        <div class="empty">
+          <div class="empty-icon">🎯</div>
+          <div class="empty-title">Select a Scenario</div>
+          <div class="empty-sub">Choose one from the left panel to view details and run it.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSCRIPT TAB -->
+    <div class="tab-content" id="tab-transcript">
+      <div class="transcript-area" id="transcriptArea">
+        <div class="empty">
+          <div class="empty-icon">💬</div>
+          <div class="empty-title">No Transcript Yet</div>
+          <div class="empty-sub">Run a scenario to see the live conversation here.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JUDGE TAB -->
+    <div class="tab-content" id="tab-judge">
+      <div class="judge-area" id="judgeArea">
+        <div class="empty">
+          <div class="empty-icon">⚖️</div>
+          <div class="empty-title">No Judgment Yet</div>
+          <div class="empty-sub">The judge verdict appears here after a call completes.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RUNS TAB -->
+    <div class="tab-content" id="tab-runs">
+      <div class="panel-header">
+        <h2>Completed Runs</h2>
+        <button class="btn btn-sm btn-ghost" onclick="loadRuns()">↻ Refresh</button>
+      </div>
+      <div class="runs-area" id="runsArea">
+        <div class="empty"><div class="empty-icon">📂</div><div class="empty-sub">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- REPORT TAB -->
+    <div class="tab-content" id="tab-report">
+      <div class="report-area">
+        <div class="report-actions">
+          <button class="btn" onclick="generateReport()">Generate Bug Report</button>
+          <button class="btn btn-ghost" onclick="loadReport()">↻ Load Saved Report</button>
+        </div>
+        <div id="reportContent">
+          <div class="empty">
+            <div class="empty-icon">📋</div>
+            <div class="empty-title">No Report</div>
+            <div class="empty-sub">Click "Generate Bug Report" after running scenarios.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let scenarios = [];
+let selectedScenario = null;
+let activeCallSid = null;
+let activeScenarioId = null;
+let pollInterval = null;
+let callPhase = 'idle'; // idle | calling | in-progress | transcribing | judging | done | error
+
+// ─── Tab switching ────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + name));
+  if (name === 'runs') loadRuns();
+  if (name === 'report') loadReport();
+}
+
+// ─── Server health ────────────────────────────────────────────────────────────
+async function checkServer() {
+  try {
+    const r = await fetch('/api/ping');
+    const ok = r.ok;
+    document.getElementById('serverDot').className = 'dot ' + (ok ? 'online' : 'offline');
+    document.getElementById('serverLabel').textContent = ok ? 'server online' : 'server error';
+  } catch {
+    document.getElementById('serverDot').className = 'dot offline';
+    document.getElementById('serverLabel').textContent = 'server offline';
+  }
+}
+
+// ─── Load scenarios ───────────────────────────────────────────────────────────
+async function loadScenarios() {
+  try {
+    const r = await fetch('/api/scenarios');
+    const data = await r.json();
+    scenarios = data;
+    renderScenarioList();
+  } catch (e) {
+    document.getElementById('scenarioList').innerHTML =
+      '<div class="empty"><div class="empty-sub">Failed to load scenarios</div></div>';
+  }
+}
+
+function renderScenarioList() {
+  const el = document.getElementById('scenarioList');
+  if (!scenarios.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-sub">No scenarios found</div></div>';
+    return;
+  }
+  el.innerHTML = scenarios.map(s => {
+    const verdictHtml = s.last_verdict
+      ? `<span class="last-verdict verdict-${s.last_verdict}">${s.last_verdict}</span>`
+      : '';
+    const active = selectedScenario && selectedScenario.id === s.id ? ' active' : '';
+    return `
+      <div class="scenario-item${active}" onclick="selectScenario(${s.id})">
+        <div class="scenario-id">${s.id}</div>
+        <div class="scenario-info">
+          <div class="scenario-name">${s.name}</div>
+          <div class="scenario-meta">
+            <span class="severity-pill severity-${s.severity}">${s.severity}</span>
+            ${verdictHtml}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ─── Select scenario ──────────────────────────────────────────────────────────
+function selectScenario(id) {
+  selectedScenario = scenarios.find(s => s.id === id);
+  if (!selectedScenario) return;
+  document.querySelectorAll('.scenario-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.scenario-item').forEach(el => {
+    if (el.querySelector('.scenario-id')?.textContent == id) el.classList.add('active');
+  });
+  renderDetail();
+  // Load last run for this scenario if exists
+  loadLastRunForScenario(id);
+}
+
+function renderDetail() {
+  const s = selectedScenario;
+  if (!s) return;
+  const bugItems = (s.bug_conditions || []).map(b => `<li>${b}</li>`).join('');
+  document.getElementById('detailArea').innerHTML = `
+    <div class="detail-header">
+      <div>
+        <div class="detail-title">${s.name}</div>
+        <div class="detail-subtitle">Caller: <strong>${s.caller_name}</strong> &nbsp;·&nbsp; Scenario #${s.id}</div>
+      </div>
+      <div class="detail-actions">
+        <button class="btn" id="runBtn" onclick="runScenario(${s.id})">▶ Run Call</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Goal</div>
+      <div class="card-text">${s.goal}</div>
+    </div>
+
+    ${s.hidden_trap ? `
+    <div class="card" style="border-color: rgba(234,179,8,0.3)">
+      <div class="card-label" style="color:#fbbf24">⚡ Hidden Trap</div>
+      <div class="card-text">${s.hidden_trap}</div>
+    </div>` : ''}
+
+    <div class="card">
+      <div class="card-label">Expected Agent Behavior</div>
+      <div class="card-text">${s.expected_agent_behavior}</div>
+    </div>
+
+    <div class="card" style="border-color: rgba(239,68,68,0.2)">
+      <div class="card-label" style="color:#f87171">Bug Conditions to Detect</div>
+      <ul class="bug-list">${bugItems}</ul>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Opening Line</div>
+      <div class="card-text" style="font-style:italic; color:#a5b4fc">"${s.opening_line}"</div>
+    </div>
+  `;
+}
+
+// ─── Run scenario ─────────────────────────────────────────────────────────────
+async function runScenario(id) {
+  if (callPhase !== 'idle' && callPhase !== 'done' && callPhase !== 'error') {
+    alert('A call is already in progress. Wait for it to finish.');
+    return;
+  }
+
+  activeScenarioId = id;
+  activeCallSid = null;
+  setPhase('calling');
+  clearTranscript();
+  clearJudge();
+
+  try {
+    const r = await fetch(`/api/run/${id}`, { method: 'POST' });
+    if (!r.ok) throw new Error(await r.text());
+    const data = await r.json();
+    activeCallSid = data.call_sid;
+    setPhase('in-progress');
+    startPolling();
+  } catch (e) {
+    setPhase('error', e.message);
+  }
+}
+
+// ─── Run ALL scenarios ────────────────────────────────────────────────────────
+async function runAll() {
+  if (callPhase !== 'idle' && callPhase !== 'done' && callPhase !== 'error') {
+    alert('A call is already in progress.');
+    return;
+  }
+  if (!confirm('Run all 10 scenarios sequentially? This will make 10 real phone calls.')) return;
+
+  document.getElementById('runAllBtn').disabled = true;
+  for (const s of scenarios) {
+    selectScenario(s.id);
+    switchTab('scenario');
+    await runScenario(s.id);
+    // Wait for this call to fully complete (phase = done or error)
+    await waitForPhase(['done', 'error']);
+    if (s.id !== scenarios[scenarios.length - 1].id) {
+      setStatus(`Waiting 60s before next call...`);
+      await sleep(60000);
+    }
+  }
+  document.getElementById('runAllBtn').disabled = false;
+  setPhase('idle');
+}
+
+function waitForPhase(phases) {
+  return new Promise(resolve => {
+    const check = setInterval(() => {
+      if (phases.includes(callPhase)) { clearInterval(check); resolve(); }
+    }, 1000);
+  });
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ─── Polling ──────────────────────────────────────────────────────────────────
+function startPolling() {
+  stopPolling();
+  pollInterval = setInterval(poll, 3000);
+  poll();
+}
+
+function stopPolling() {
+  if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+}
+
+async function poll() {
+  if (!activeCallSid) return;
+  try {
+    const r = await fetch(`/api/status/${activeCallSid}`);
+    const data = await r.json();
+
+    if (data.twilio_status) {
+      if (['completed','failed','busy','no-answer','canceled'].includes(data.twilio_status)) {
+        if (data.twilio_status !== 'completed') {
+          setPhase('error', `Call ended: ${data.twilio_status}`);
+          stopPolling();
+          return;
+        }
+        setPhase('transcribing');
+      }
+    }
+
+    if (data.transcript) {
+      renderTranscript(data.transcript);
+    }
+
+    if (data.judge) {
+      renderJudge(data.judge);
+      setPhase('done');
+      stopPolling();
+      await loadScenarios(); // refresh verdicts in sidebar
+    } else if (data.twilio_status === 'completed' && !data.judge) {
+      setPhase('judging');
+    }
+  } catch (e) {
+    console.warn('Poll error:', e);
+  }
+}
+
+// ─── Phase / Status ───────────────────────────────────────────────────────────
+const phaseLabels = {
+  idle: ['idle', 'Ready'],
+  calling: ['calling', 'Placing call...'],
+  'in-progress': ['in-progress', 'Call in progress'],
+  transcribing: ['transcribing', 'Transcribing recording...'],
+  judging: ['judging', 'Judge evaluating...'],
+  done: ['done', 'Complete'],
+  error: ['error', 'Error'],
+};
+
+function setPhase(phase, extra) {
+  callPhase = phase;
+  const [cls, label] = phaseLabels[phase] || ['idle', phase];
+  const sid = activeCallSid ? ` · SID: ${activeCallSid}` : '';
+  const msg = extra ? ` · ${extra}` : '';
+  document.getElementById('statusBar').innerHTML = `
+    <span class="status-pill status-${cls}">${label}</span>
+    <span>${label}${sid}${msg}</span>
+    ${['calling','in-progress','transcribing','judging'].includes(phase) ? '<div class="spinner"></div>' : ''}
+  `;
+  const runBtn = document.getElementById('runBtn');
+  if (runBtn) runBtn.disabled = ['calling','in-progress','transcribing','judging'].includes(phase);
+}
+
+function setStatus(msg) {
+  document.getElementById('statusBar').innerHTML = `<span>${msg}</span>`;
+}
+
+// ─── Transcript ───────────────────────────────────────────────────────────────
+function clearTranscript() {
+  document.getElementById('transcriptArea').innerHTML =
+    '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-sub">Waiting for call to start...</div></div>';
+}
+
+function renderTranscript(transcript) {
+  const turns = transcript.turns || [];
+  if (!turns.length) return;
+  const speakerAIsPatient = transcript.speaker_A_is_patient !== false;
+
+  const html = turns.map(t => {
+    let spk = t.speaker;
+    if (spk === 'A') spk = speakerAIsPatient ? 'patient' : 'agent';
+    if (spk === 'B') spk = speakerAIsPatient ? 'agent' : 'patient';
+    const ts = t.start_ms != null ? formatMs(t.start_ms) : '';
+    return `
+      <div class="turn">
+        <div class="turn-speaker ${spk}">${spk}</div>
+        <div>
+          <div class="turn-bubble">${escHtml(t.text || '')}</div>
+          ${ts ? `<div class="turn-time">${ts}</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('transcriptArea').innerHTML = html;
+}
+
+// ─── Judge ────────────────────────────────────────────────────────────────────
+function clearJudge() {
+  document.getElementById('judgeArea').innerHTML =
+    '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-sub">Waiting for evaluation...</div></div>';
+}
+
+function renderJudge(j) {
+  const verdict = j.verdict || 'ERROR';
+  const icons = { PASS: '✅', WEAKNESS: '⚠️', BUG: '🐛', ERROR: '❌' };
+  const sev = j.severity ? `<span class="severity-pill severity-${j.severity}" style="font-size:11px;padding:3px 8px">${j.severity}</span>` : '';
+
+  const evidenceHtml = j.evidence ? `<blockquote class="evidence">"${escHtml(j.evidence)}"</blockquote>` : '';
+
+  const fields = [
+    ['Scenario', j.scenario_name || '—'],
+    ['Call SID', j.call_sid || '—'],
+    ['Severity', sev || j.severity || 'N/A'],
+    ['Summary', escHtml(j.summary || '—')],
+    ['Evidence', evidenceHtml || '—'],
+    ['Bug Description', escHtml(j.bug_description || '—')],
+    ['Expected Behavior', escHtml(j.expected_behavior || '—')],
+    ['Call Reference', escHtml(j.call_reference || '—')],
+  ];
+
+  document.getElementById('judgeArea').innerHTML = `
+    <div class="verdict-banner ${verdict}">
+      <div class="verdict-icon">${icons[verdict] || '❓'}</div>
+      <div>
+        <div class="verdict-label">${verdict}</div>
+        <div class="verdict-summary">${escHtml(j.summary || '')}</div>
+      </div>
+    </div>
+    <div class="card">
+      ${fields.map(([k, v]) => `
+        <div class="field-row">
+          <div class="field-key">${k}</div>
+          <div class="field-val">${v}</div>
+        </div>`).join('')}
+    </div>
+  `;
+  // Switch to judge tab automatically
+  switchTab('judge');
+}
+
+// ─── Load last run for scenario ───────────────────────────────────────────────
+async function loadLastRunForScenario(id) {
+  try {
+    const r = await fetch(`/api/runs?scenario_id=${id}`);
+    const runs = await r.json();
+    if (!runs.length) return;
+    const latest = runs[runs.length - 1];
+    if (latest.transcript) renderTranscript(latest.transcript);
+    if (latest.judge) renderJudge(latest.judge);
+    if (latest.judge) {
+      activeCallSid = latest.call_sid;
+      activeScenarioId = id;
+      setPhase('done');
+    }
+  } catch {}
+}
+
+// ─── All Runs tab ─────────────────────────────────────────────────────────────
+async function loadRuns() {
+  const area = document.getElementById('runsArea');
+  area.innerHTML = '<div class="empty"><div class="empty-sub">Loading...</div></div>';
+  try {
+    const r = await fetch('/api/runs');
+    const runs = await r.json();
+    if (!runs.length) {
+      area.innerHTML = '<div class="empty"><div class="empty-icon">📂</div><div class="empty-sub">No completed runs yet.</div></div>';
+      return;
+    }
+    area.innerHTML = runs.reverse().map(run => {
+      const verdict = run.judge?.verdict;
+      const vHtml = verdict ? `<span class="last-verdict verdict-${verdict}">${verdict}</span>` : '<span style="color:var(--muted);font-size:10px">pending</span>';
+      const sev = run.judge?.severity ? `<span class="severity-pill severity-${run.judge.severity}">${run.judge.severity}</span>` : '';
+      return `
+        <div class="run-row" onclick="openRun('${run.call_sid}', ${run.scenario_id})">
+          <div>
+            <div class="run-scenario">#${run.scenario_id} — ${escHtml(run.scenario_name || '')}</div>
+            <div class="run-sid">${run.call_sid}</div>
+          </div>
+          ${sev}
+          ${vHtml}
+          <span class="run-time">${run.started_at ? run.started_at.split('T')[0] : ''}</span>
+        </div>`;
+    }).join('');
+  } catch (e) {
+    area.innerHTML = '<div class="empty"><div class="empty-sub">Failed to load runs.</div></div>';
+  }
+}
+
+async function openRun(callSid, scenarioId) {
+  activeCallSid = callSid;
+  activeScenarioId = scenarioId;
+  selectScenario(scenarioId);
+  try {
+    const r = await fetch(`/api/runs?scenario_id=${scenarioId}&call_sid=${callSid}`);
+    const runs = await r.json();
+    const run = runs.find(x => x.call_sid === callSid) || runs[0];
+    if (run?.transcript) renderTranscript(run.transcript);
+    if (run?.judge) { renderJudge(run.judge); setPhase('done'); }
+  } catch {}
+  switchTab('transcript');
+}
+
+// ─── Bug report ───────────────────────────────────────────────────────────────
+async function generateReport() {
+  document.getElementById('reportContent').innerHTML = '<div class="empty"><div class="spinner" style="margin:0 auto"></div></div>';
+  try {
+    const r = await fetch('/api/report', { method: 'POST' });
+    const data = await r.json();
+    renderReport(data.content);
+  } catch (e) {
+    document.getElementById('reportContent').innerHTML = `<div class="empty"><div class="empty-sub">Error: ${e.message}</div></div>`;
+  }
+}
+
+async function loadReport() {
+  try {
+    const r = await fetch('/api/report');
+    if (!r.ok) { generateReport(); return; }
+    const data = await r.json();
+    renderReport(data.content);
+  } catch { generateReport(); }
+}
+
+function renderReport(text) {
+  document.getElementById('reportContent').innerHTML = `<pre class="report-text">${escHtml(text)}</pre>`;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function formatMs(ms) {
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  return `${m}:${String(s % 60).padStart(2, '0')}`;
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function refreshAll() {
+  loadScenarios();
+  if (selectedScenario) loadLastRunForScenario(selectedScenario.id);
+}
+
+// ─── Boot ─────────────────────────────────────────────────────────────────────
+checkServer();
+setInterval(checkServer, 10000);
+loadScenarios();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+.env
+.env.local
+.env.*.local
+.venv/
+logs/
+runs/
+reports/*.md
+reports/*.json
+*.mp3
+*.ogg
+*.wav
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
