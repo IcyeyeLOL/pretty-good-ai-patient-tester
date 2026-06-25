@@ -1,0 +1,12 @@
+{
+  "scenario_id": 2,
+  "call_sid": "FIX02noExplain",
+  "speaker_A_is_patient": true,
+  "turns": [
+    {"speaker": "patient", "text": "Hi, can I come in this Saturday around 10am?", "start_ms": 1000},
+    {"speaker": "agent", "text": "We cannot schedule you for then.", "start_ms": 9000},
+    {"speaker": "patient", "text": "Oh. Really? There's no Saturday availability at all?", "start_ms": 14000},
+    {"speaker": "agent", "text": "No. We have Tuesday at 10am.", "start_ms": 22000},
+    {"speaker": "patient", "text": "Okay, fine. Tuesday at 10 works.", "start_ms": 30000}
+  ]
+}

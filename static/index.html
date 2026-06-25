@@ -63,7 +63,7 @@
     margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 12px;
     font-size: 11px;
     color: var(--muted);
   }
@@ -142,6 +142,44 @@
     color: var(--red);
   }
   .btn-danger:hover { background: rgba(239,68,68,0.1); }
+
+  .download-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .download-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--text);
+  }
+  .btn-download {
+    background: rgba(99,102,241,0.15);
+    border: 1px solid var(--accent);
+    color: #c7d2fe;
+    font-weight: 600;
+  }
+  .btn-download:hover:not(:disabled) {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-download:disabled {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--muted);
+    opacity: 0.5;
+  }
+
+  .btn-warm {
+    background: transparent;
+    border: 1px solid rgba(99,102,241,0.4);
+    color: #a5b4fc;
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+  .btn-warm:hover { background: rgba(99,102,241,0.1); }
+  .btn-warm.warmed { border-color: rgba(34,197,94,0.4); color: #4ade80; }
 
   .scenario-list {
     flex: 1;
@@ -286,9 +324,28 @@
 
   .detail-actions {
     display: flex;
+    flex-direction: column;
     gap: 8px;
     flex-shrink: 0;
+    align-items: flex-end;
   }
+
+  .run-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+  }
+  .toggle-label input[type=checkbox] { accent-color: var(--accent); width: 12px; height: 12px; cursor: pointer; }
 
   .card {
     background: var(--surface);
@@ -435,9 +492,55 @@
   .verdict-banner.ERROR .verdict-label { color: var(--muted); }
   .verdict-summary { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
+  .judge-source-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .source-pill {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    background: rgba(99,102,241,0.12);
+    color: #a5b4fc;
+  }
+  .source-pill.rule { background: rgba(239,68,68,0.12); color: #f87171; }
+  .source-pill.llm { background: rgba(59,130,246,0.12); color: #60a5fa; }
+  .source-pill.none { background: var(--surface2); color: var(--muted); }
+
+  .warning-list {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(234,179,8,0.06);
+    border: 1px solid rgba(234,179,8,0.2);
+    border-radius: var(--radius);
+  }
+  .warning-list-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #fbbf24;
+    margin-bottom: 6px;
+  }
+  .warning-item {
+    font-size: 11px;
+    color: #fde68a;
+    padding: 2px 0;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .warning-item::before { content: '⚠'; font-size: 10px; flex-shrink: 0; margin-top: 1px; }
+
   .field-row {
     display: grid;
-    grid-template-columns: 140px 1fr;
+    grid-template-columns: 160px 1fr;
     gap: 8px;
     padding: 8px 0;
     border-bottom: 1px solid var(--border);
@@ -458,6 +561,84 @@
     color: #a5b4fc;
     font-size: 12px;
   }
+
+  /* LATENCY TAB */
+  .latency-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+  }
+
+  .latency-section {
+    margin-bottom: 20px;
+  }
+
+  .latency-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .delta-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0;
+  }
+
+  .delta-row {
+    display: contents;
+  }
+
+  .delta-row > div {
+    padding: 6px 0;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(42,47,61,0.5);
+  }
+
+  .delta-key { color: var(--muted); }
+  .delta-val {
+    text-align: right;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .delta-val.fast { color: var(--green); }
+  .delta-val.ok { color: var(--yellow); }
+  .delta-val.slow { color: var(--red); }
+
+  .turn-latency-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  .turn-latency-table th {
+    text-align: left;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .turn-latency-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid rgba(42,47,61,0.5);
+    vertical-align: top;
+  }
+  .turn-latency-table tr:last-child td { border-bottom: none; }
+  .latency-ms {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: 11px;
+  }
+  .latency-ms.fast { color: var(--green); }
+  .latency-ms.ok { color: var(--yellow); }
+  .latency-ms.slow { color: var(--red); }
 
   /* RUNS TAB */
   .runs-area {
@@ -496,6 +677,98 @@
     display: flex;
     gap: 8px;
     margin-bottom: 16px;
+    align-items: center;
+  }
+
+  .report-summary {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 8px 12px;
+    margin-bottom: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .bug-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .bug-card.is-bug { border-left-color: var(--red); }
+  .bug-card.is-weakness { border-left-color: var(--yellow); }
+
+  .bug-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .bug-card-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .tag-bug { background: rgba(239,68,68,0.15); color: #f87171; }
+  .tag-weak { background: rgba(234,179,8,0.15); color: #fbbf24; }
+  .bug-card-scenario {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .bug-card-bug {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .bug-card-details {
+    font-size: 12px;
+    color: #c7cad6;
+    line-height: 1.7;
+  }
+  .bug-card-foot {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .bug-card-call {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: inherit;
+  }
+
+  .all-clear-panel {
+    text-align: center;
+    padding: 48px 24px;
+    background: rgba(34,197,94,0.06);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: var(--radius);
+  }
+  .all-clear-icon { font-size: 44px; margin-bottom: 12px; }
+  .all-clear-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .all-clear-sub {
+    font-size: 12px;
+    color: var(--muted);
+    max-width: 460px;
+    margin: 0 auto;
+    line-height: 1.6;
   }
 
   pre.report-text {
@@ -540,22 +813,14 @@
 
   .hidden { display: none !important; }
 
-  .run-all-bar {
-    padding: 10px 16px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    gap: 8px;
-    background: var(--surface);
-  }
-
-  .progress-row {
-    padding: 6px 0;
-    font-size: 11px;
+  .warmup-status {
+    font-size: 10px;
     color: var(--muted);
     display: flex;
-    gap: 8px;
     align-items: center;
+    gap: 6px;
   }
+  .warmup-status.ready { color: #4ade80; }
 </style>
 </head>
 <body>
@@ -564,8 +829,13 @@
   <h1>AI Voice Interview</h1>
   <span class="badge">Dev Console</span>
   <div class="server-status">
-    <div class="dot" id="serverDot"></div>
-    <span id="serverLabel">checking...</span>
+    <div class="warmup-status" id="warmupStatus">
+      <button class="btn btn-warm btn-sm" id="warmupBtn" onclick="doWarmup()">⚡ Warmup</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div class="dot" id="serverDot"></div>
+      <span id="serverLabel">checking...</span>
+    </div>
   </div>
 </header>
 
@@ -574,13 +844,13 @@
   <div class="panel-left">
     <div class="panel-header">
       <h2>Scenarios</h2>
-      <button class="btn btn-sm btn-ghost" onclick="refreshAll()">↻ Refresh</button>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm btn-ghost" id="refreshBtn" onclick="refreshAll()" title="Re-sync everything from the server">↻ Refresh</button>
+        <button class="btn btn-sm btn-danger" id="resetBtn" onclick="resetSession()" title="Archive all runs and clear the bug report — start brand new">🗑 Reset</button>
+      </div>
     </div>
     <div class="scenario-list" id="scenarioList">
       <div class="empty"><div class="empty-icon">⏳</div><div class="empty-sub">Loading...</div></div>
-    </div>
-    <div class="run-all-bar">
-      <button class="btn" style="flex:1" id="runAllBtn" onclick="runAll()">▶ Run All Scenarios</button>
     </div>
   </div>
 
@@ -590,6 +860,7 @@
       <div class="tab active" data-tab="scenario" onclick="switchTab('scenario')">Scenario</div>
       <div class="tab" data-tab="transcript" onclick="switchTab('transcript')">Transcript</div>
       <div class="tab" data-tab="judge" onclick="switchTab('judge')">Judge</div>
+      <div class="tab" data-tab="latency" onclick="switchTab('latency')">Latency</div>
       <div class="tab" data-tab="runs" onclick="switchTab('runs')">All Runs</div>
       <div class="tab" data-tab="report" onclick="switchTab('report')">Bug Report</div>
     </div>
@@ -611,6 +882,15 @@
 
     <!-- TRANSCRIPT TAB -->
     <div class="tab-content" id="tab-transcript">
+      <div class="panel-header">
+        <h2 id="transcriptTitle">Transcript</h2>
+        <div class="download-group">
+          <span class="download-label">⬇ Download:</span>
+          <button class="btn btn-sm btn-download" id="downloadTxtBtn" onclick="downloadTranscript('txt')" disabled>Transcript .txt</button>
+          <button class="btn btn-sm btn-download" id="downloadJsonBtn" onclick="downloadTranscript('json')" disabled>Transcript .json</button>
+          <button class="btn btn-sm btn-download" id="downloadAudioBtn" onclick="downloadRecording()" disabled>Audio .mp3</button>
+        </div>
+      </div>
       <div class="transcript-area" id="transcriptArea">
         <div class="empty">
           <div class="empty-icon">💬</div>
@@ -631,6 +911,17 @@
       </div>
     </div>
 
+    <!-- LATENCY TAB -->
+    <div class="tab-content" id="tab-latency">
+      <div class="latency-area" id="latencyArea">
+        <div class="empty">
+          <div class="empty-icon">⏱️</div>
+          <div class="empty-title">No Latency Data Yet</div>
+          <div class="empty-sub">Startup timeline and per-turn latency appear here after a call.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- RUNS TAB -->
     <div class="tab-content" id="tab-runs">
       <div class="panel-header">
@@ -646,8 +937,11 @@
     <div class="tab-content" id="tab-report">
       <div class="report-area">
         <div class="report-actions">
-          <button class="btn" onclick="generateReport()">Generate Bug Report</button>
-          <button class="btn btn-ghost" onclick="loadReport()">↻ Load Saved Report</button>
+          <button class="btn" onclick="generateReport()">↻ Regenerate Report</button>
+          <span style="flex:1"></span>
+          <span class="download-label">⬇ Export:</span>
+          <button class="btn btn-sm btn-download" id="exportPdfBtn" onclick="downloadReportPdf()" disabled>PDF</button>
+          <button class="btn btn-sm btn-download" id="exportDocBtn" onclick="downloadReportDoc()" disabled>Word .doc</button>
         </div>
         <div id="reportContent">
           <div class="empty">
@@ -669,13 +963,17 @@ let activeCallSid = null;
 let activeScenarioId = null;
 let pollInterval = null;
 let callPhase = 'idle'; // idle | calling | in-progress | transcribing | judging | done | error
+let currentTranscript = null; // last-rendered transcript, for download
+let lastReportText = '';      // last-rendered bug report markdown, for PDF/DOC export
 
 // ─── Tab switching ────────────────────────────────────────────────────────────
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === 'tab-' + name));
   if (name === 'runs') loadRuns();
-  if (name === 'report') loadReport();
+  // Always regenerate the report from the CURRENT runs so it's never a stale snapshot.
+  if (name === 'report') generateReport();
+  if (name === 'latency' && activeCallSid) loadLatency(activeCallSid);
 }
 
 // ─── Server health ────────────────────────────────────────────────────────────
@@ -689,6 +987,29 @@ async function checkServer() {
     document.getElementById('serverDot').className = 'dot offline';
     document.getElementById('serverLabel').textContent = 'server offline';
   }
+}
+
+// ─── Warmup ───────────────────────────────────────────────────────────────────
+async function doWarmup() {
+  const btn = document.getElementById('warmupBtn');
+  const status = document.getElementById('warmupStatus');
+  btn.disabled = true;
+  btn.textContent = '⚡ Warming...';
+  try {
+    const r = await fetch('/api/warmup', { method: 'POST' });
+    const data = await r.json();
+    if (data.ready) {
+      btn.textContent = '✓ Warmed';
+      btn.classList.add('warmed');
+      status.classList.add('ready');
+    } else {
+      const failed = Object.keys(data.report?.failed || {}).join(', ');
+      btn.textContent = `⚡ Partial (${failed || 'unknown'})`;
+    }
+  } catch {
+    btn.textContent = '⚡ Failed';
+  }
+  btn.disabled = false;
 }
 
 // ─── Load scenarios ───────────────────────────────────────────────────────────
@@ -730,7 +1051,7 @@ function renderScenarioList() {
 }
 
 // ─── Select scenario ──────────────────────────────────────────────────────────
-function selectScenario(id) {
+function selectScenario(id, { focus = true } = {}) {
   selectedScenario = scenarios.find(s => s.id === id);
   if (!selectedScenario) return;
   document.querySelectorAll('.scenario-item').forEach(el => el.classList.remove('active'));
@@ -738,39 +1059,51 @@ function selectScenario(id) {
     if (el.querySelector('.scenario-id')?.textContent == id) el.classList.add('active');
   });
   renderDetail();
-  // Load last run for this scenario if exists
+  // Always land on the Scenario tab so clicking a scenario visibly responds,
+  // even if a previous scenario had force-switched us to the Judge tab.
+  if (focus) switchTab('scenario');
   loadLastRunForScenario(id);
 }
 
 function renderDetail() {
   const s = selectedScenario;
   if (!s) return;
-  const bugItems = (s.bug_conditions || []).map(b => `<li>${b}</li>`).join('');
+  const bugItems = (s.bug_conditions || []).map(b => `<li>${escHtml(b)}</li>`).join('');
   document.getElementById('detailArea').innerHTML = `
     <div class="detail-header">
       <div>
-        <div class="detail-title">${s.name}</div>
-        <div class="detail-subtitle">Caller: <strong>${s.caller_name}</strong> &nbsp;·&nbsp; Scenario #${s.id}</div>
+        <div class="detail-title">${escHtml(s.name)}</div>
+        <div class="detail-subtitle">Caller: <strong>${escHtml(s.caller_name)}</strong> &nbsp;·&nbsp; Scenario #${s.id}</div>
       </div>
       <div class="detail-actions">
-        <button class="btn" id="runBtn" onclick="runScenario(${s.id})">▶ Run Call</button>
+        <div class="run-controls">
+          <label class="toggle-label" title="Use VERIFIED_TEST_PHONE instead of the final assessment number">
+            <input type="checkbox" id="testTargetChk"> test target
+          </label>
+          <button class="btn" id="runBtn" onclick="runScenario(${s.id})">▶ Run Call</button>
+        </div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-label">Goal</div>
-      <div class="card-text">${s.goal}</div>
+      <div class="card-text">${escHtml(s.goal)}</div>
     </div>
 
     ${s.hidden_trap ? `
     <div class="card" style="border-color: rgba(234,179,8,0.3)">
       <div class="card-label" style="color:#fbbf24">⚡ Hidden Trap</div>
-      <div class="card-text">${s.hidden_trap}</div>
+      <div class="card-text">${escHtml(s.hidden_trap)}</div>
     </div>` : ''}
 
     <div class="card">
       <div class="card-label">Expected Agent Behavior</div>
-      <div class="card-text">${s.expected_agent_behavior}</div>
+      <div class="card-text">${escHtml(s.expected_agent_behavior)}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">End Condition</div>
+      <div class="card-text">${escHtml(s.end_condition || '—')}</div>
     </div>
 
     <div class="card" style="border-color: rgba(239,68,68,0.2)">
@@ -780,7 +1113,7 @@ function renderDetail() {
 
     <div class="card">
       <div class="card-label">Opening Line</div>
-      <div class="card-text" style="font-style:italic; color:#a5b4fc">"${s.opening_line}"</div>
+      <div class="card-text" style="font-style:italic; color:#a5b4fc">"${escHtml(s.opening_line)}"</div>
     </div>
   `;
 }
@@ -792,67 +1125,76 @@ async function runScenario(id) {
     return;
   }
 
+  const testTarget = document.getElementById('testTargetChk')?.checked || false;
+  document.getElementById('runErrorCard')?.remove();
   activeScenarioId = id;
   activeCallSid = null;
   setPhase('calling');
   clearTranscript();
   clearJudge();
+  clearLatency();
 
   try {
-    const r = await fetch(`/api/run/${id}`, { method: 'POST' });
-    if (!r.ok) throw new Error(await r.text());
-    const data = await r.json();
+    const url = `/api/run/${id}${testTarget ? '?test_target=true' : ''}`;
+    const r = await fetch(url, { method: 'POST' });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error) {
+      showRunError(data.error || `HTTP ${r.status}`, testTarget);
+      return;
+    }
     activeCallSid = data.call_sid;
     setPhase('in-progress');
     startPolling();
   } catch (e) {
-    setPhase('error', e.message);
+    showRunError(e.message, testTarget);
   }
 }
 
-// ─── Run ALL scenarios ────────────────────────────────────────────────────────
-async function runAll() {
-  if (callPhase !== 'idle' && callPhase !== 'done' && callPhase !== 'error') {
-    alert('A call is already in progress.');
-    return;
-  }
-  if (!confirm('Run all 10 scenarios sequentially? This will make 10 real phone calls.')) return;
+// Surface call-placement failures clearly, with a hint for the common Telnyx
+// "non-verified number" (403 / D60) rejection.
+function showRunError(rawError, testTarget) {
+  setPhase('error', 'Call could not be placed');
+  let pretty = rawError;
+  try { pretty = JSON.stringify(JSON.parse(rawError), null, 2); } catch {}
 
-  document.getElementById('runAllBtn').disabled = true;
-  for (const s of scenarios) {
-    selectScenario(s.id);
-    switchTab('scenario');
-    await runScenario(s.id);
-    // Wait for this call to fully complete (phase = done or error)
-    await waitForPhase(['done', 'error']);
-    if (s.id !== scenarios[scenarios.length - 1].id) {
-      setStatus(`Waiting 60s before next call...`);
-      await sleep(60000);
-    }
-  }
-  document.getElementById('runAllBtn').disabled = false;
-  setPhase('idle');
+  const isVerifyError = /non-verified|D60|verify|10010|403/i.test(rawError || '');
+  const hint = isVerifyError
+    ? `<div class="card" style="border-color:rgba(234,179,8,0.4)">
+         <div class="card-label" style="color:#fbbf24">⚠ Telnyx account restriction</div>
+         <div class="card-text">
+           Telnyx is blocking the call because the destination number isn't verified on this account level.
+           <ul class="bug-list" style="margin-top:8px">
+             <li>${testTarget ? 'Your <strong>VERIFIED_TEST_PHONE</strong> is still not verified in the Telnyx portal — verify it under Verified Numbers.' : 'Tick the <strong>“test target”</strong> checkbox to call your <strong>VERIFIED_TEST_PHONE</strong> instead of the unverified TARGET_PHONE.'}</li>
+             <li>Or verify the destination number in the Telnyx portal (Verified Numbers).</li>
+             <li>Or upgrade the Telnyx account to a level that allows outbound calls to any number.</li>
+           </ul>
+         </div>
+       </div>`
+    : '';
+
+  document.getElementById('detailArea').insertAdjacentHTML('afterbegin', `
+    <div class="card" id="runErrorCard" style="border-color:rgba(239,68,68,0.4)">
+      <div class="card-label" style="color:#f87171">✕ Run failed</div>
+      <pre class="report-text" style="margin-top:8px">${escHtml(pretty)}</pre>
+    </div>
+    ${hint}
+  `);
 }
-
-function waitForPhase(phases) {
-  return new Promise(resolve => {
-    const check = setInterval(() => {
-      if (phases.includes(callPhase)) { clearInterval(check); resolve(); }
-    }, 1000);
-  });
-}
-
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // ─── Polling ──────────────────────────────────────────────────────────────────
+let judgingSince = null;        // timestamp when we first entered "judging"
+const JUDGING_TIMEOUT_MS = 120000;  // safety net: stop polling after 2 min
+
 function startPolling() {
   stopPolling();
+  judgingSince = null;
   pollInterval = setInterval(poll, 3000);
   poll();
 }
 
 function stopPolling() {
   if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+  judgingSince = null;
 }
 
 async function poll() {
@@ -861,13 +1203,16 @@ async function poll() {
     const r = await fetch(`/api/status/${activeCallSid}`);
     const data = await r.json();
 
-    if (data.twilio_status) {
-      if (['completed','failed','busy','no-answer','canceled'].includes(data.twilio_status)) {
-        if (data.twilio_status !== 'completed') {
-          setPhase('error', `Call ended: ${data.twilio_status}`);
-          stopPolling();
-          return;
-        }
+    const callStatus = data.status || data.twilio_status || data.telnyx_status;
+    if (callStatus) {
+      const failed = ['failed','busy','no-answer','canceled'].includes(callStatus);
+      const completed = callStatus === 'completed';
+      if (failed) {
+        setPhase('error', `Call ended: ${callStatus}`);
+        stopPolling();
+        return;
+      }
+      if (completed) {
         setPhase('transcribing');
       }
     }
@@ -877,12 +1222,20 @@ async function poll() {
     }
 
     if (data.judge) {
-      renderJudge(data.judge);
+      renderJudge(data.judge, true);
       setPhase('done');
       stopPolling();
-      await loadScenarios(); // refresh verdicts in sidebar
-    } else if (data.twilio_status === 'completed' && !data.judge) {
+      await loadScenarios();
+      loadLatency(activeCallSid);
+    } else if (callStatus === 'completed' && !data.judge) {
       setPhase('judging');
+      // Safety net: if the judge never finalizes (e.g. a backend hang), stop the
+      // spinner after a timeout instead of looping forever.
+      if (judgingSince === null) judgingSince = Date.now();
+      else if (Date.now() - judgingSince > JUDGING_TIMEOUT_MS) {
+        setPhase('error', 'Judge timed out — no verdict was produced. Check the call/transcript and server logs.');
+        stopPolling();
+      }
     }
   } catch (e) {
     console.warn('Poll error:', e);
@@ -904,7 +1257,7 @@ function setPhase(phase, extra) {
   callPhase = phase;
   const [cls, label] = phaseLabels[phase] || ['idle', phase];
   const sid = activeCallSid ? ` · SID: ${activeCallSid}` : '';
-  const msg = extra ? ` · ${extra}` : '';
+  const msg = extra ? ` · ${escHtml(extra)}` : '';
   document.getElementById('statusBar').innerHTML = `
     <span class="status-pill status-${cls}">${label}</span>
     <span>${label}${sid}${msg}</span>
@@ -915,29 +1268,70 @@ function setPhase(phase, extra) {
 }
 
 function setStatus(msg) {
-  document.getElementById('statusBar').innerHTML = `<span>${msg}</span>`;
+  document.getElementById('statusBar').innerHTML = `<span>${escHtml(msg)}</span>`;
 }
 
 // ─── Transcript ───────────────────────────────────────────────────────────────
+function setDownloadEnabled(on) {
+  const txt = document.getElementById('downloadTxtBtn');
+  const json = document.getElementById('downloadJsonBtn');
+  if (txt) txt.disabled = !on;
+  if (json) json.disabled = !on;
+  if (!on) {
+    const audio = document.getElementById('downloadAudioBtn');
+    if (audio) audio.disabled = true;
+  }
+}
+
+// Enable the audio button only when the server confirms a recording exists.
+async function refreshAudioButton(callSid) {
+  const audio = document.getElementById('downloadAudioBtn');
+  if (!audio) return;
+  audio.disabled = true;
+  if (!callSid) return;
+  try {
+    const r = await fetch(`/api/runs/${callSid}/has-recording`);
+    const has = await r.json();
+    audio.disabled = !(has.mp3 || has.agent || has.patient);
+  } catch { audio.disabled = true; }
+}
+
+function downloadRecording() {
+  const sid = (currentTranscript && currentTranscript.call_sid) || activeCallSid;
+  if (!sid) return;
+  // Browser handles the download via the FileResponse Content-Disposition header.
+  window.location.href = `/api/runs/${sid}/recording`;
+}
+
 function clearTranscript() {
+  currentTranscript = null;
+  setDownloadEnabled(false);
   document.getElementById('transcriptArea').innerHTML =
     '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-sub">Waiting for call to start...</div></div>';
+}
+
+function _normalizedSpeaker(t, speakerAIsPatient) {
+  let spk = t.speaker;
+  if (spk === 'A') spk = speakerAIsPatient ? 'patient' : 'agent';
+  if (spk === 'B') spk = speakerAIsPatient ? 'agent' : 'patient';
+  return spk;
 }
 
 function renderTranscript(transcript) {
   const turns = transcript.turns || [];
   if (!turns.length) return;
+  currentTranscript = transcript;
+  setDownloadEnabled(true);
+  refreshAudioButton(transcript.call_sid || activeCallSid);
   const speakerAIsPatient = transcript.speaker_A_is_patient !== false;
 
   const html = turns.map(t => {
-    let spk = t.speaker;
-    if (spk === 'A') spk = speakerAIsPatient ? 'patient' : 'agent';
-    if (spk === 'B') spk = speakerAIsPatient ? 'agent' : 'patient';
+    const spk = _normalizedSpeaker(t, speakerAIsPatient);
     const ts = t.start_ms != null ? formatMs(t.start_ms) : '';
     return `
       <div class="turn">
         <div class="turn-speaker ${spk}">${spk}</div>
-        <div>
+        <div style="flex:1">
           <div class="turn-bubble">${escHtml(t.text || '')}</div>
           ${ts ? `<div class="turn-time">${ts}</div>` : ''}
         </div>
@@ -947,29 +1341,94 @@ function renderTranscript(transcript) {
   document.getElementById('transcriptArea').innerHTML = html;
 }
 
+// ─── Download transcript ──────────────────────────────────────────────────────
+function downloadTranscript(format) {
+  if (!currentTranscript) return;
+  const t = currentTranscript;
+  const sid = t.call_sid || activeCallSid || 'transcript';
+  const snum = (t.scenario_id != null) ? String(t.scenario_id).padStart(2, '0')
+             : (selectedScenario ? String(selectedScenario.id).padStart(2, '0') : 'xx');
+  let blob, filename;
+
+  if (format === 'json') {
+    blob = new Blob([JSON.stringify(t, null, 2)], { type: 'application/json' });
+    filename = `scenario_${snum}_${sid}_transcript.json`;
+  } else {
+    const speakerAIsPatient = t.speaker_A_is_patient !== false;
+    const header = [
+      `Scenario ${snum}${selectedScenario ? ' — ' + selectedScenario.name : ''}`,
+      `Call SID: ${sid}`,
+      '',
+    ].join('\n');
+    const body = (t.turns || []).map(turn => {
+      const spk = _normalizedSpeaker(turn, speakerAIsPatient).toUpperCase();
+      const ts = turn.start_ms != null ? `[${formatMs(turn.start_ms)}] ` : '';
+      return `${ts}${spk}: ${turn.text || ''}`;
+    }).join('\n');
+    blob = new Blob([header + body + '\n'], { type: 'text/plain' });
+    filename = `scenario_${snum}_${sid}_transcript.txt`;
+  }
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 // ─── Judge ────────────────────────────────────────────────────────────────────
 function clearJudge() {
   document.getElementById('judgeArea').innerHTML =
     '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-sub">Waiting for evaluation...</div></div>';
 }
 
-function renderJudge(j) {
+function renderJudge(j, autoSwitch = false) {
   const verdict = j.verdict || 'ERROR';
   const icons = { PASS: '✅', WEAKNESS: '⚠️', BUG: '🐛', ERROR: '❌' };
   const sev = j.severity ? `<span class="severity-pill severity-${j.severity}" style="font-size:11px;padding:3px 8px">${j.severity}</span>` : '';
 
   const evidenceHtml = j.evidence ? `<blockquote class="evidence">"${escHtml(j.evidence)}"</blockquote>` : '';
 
+  // Hybrid judge metadata
+  const src = j.judge_source || 'llm';
+  const srcClass = src === 'rule' ? 'rule' : src === 'llm' ? 'llm' : src === 'rule+llm' ? '' : 'none';
+  const ruleV = j.rule_verdict;
+  const llmV = j.llm_verdict;
+  const sourceRowHtml = `
+    <div class="judge-source-row">
+      <span style="font-size:10px;color:var(--muted);font-weight:600">SOURCE:</span>
+      <span class="source-pill ${srcClass}">${src}</span>
+      ${ruleV ? `<span style="font-size:10px;color:var(--muted)">rule→</span><span class="source-pill rule">${ruleV}</span>` : ''}
+      ${llmV ? `<span style="font-size:10px;color:var(--muted)">llm→</span><span class="source-pill llm">${llmV}</span>` : ''}
+    </div>`;
+
+  const warnings = j.validation_warnings || [];
+  const warningsHtml = warnings.length ? `
+    <div class="warning-list">
+      <div class="warning-list-label">Validation Warnings</div>
+      ${warnings.map(w => `<div class="warning-item">${escHtml(w)}</div>`).join('')}
+    </div>` : '';
+
   const fields = [
-    ['Scenario', j.scenario_name || '—'],
-    ['Call SID', j.call_sid || '—'],
-    ['Severity', sev || j.severity || 'N/A'],
+    ['Scenario', escHtml(j.scenario_name || '—')],
+    ['Call SID', escHtml(j.call_sid || '—')],
+    ['Severity', sev || (j.severity ? escHtml(j.severity) : 'N/A')],
     ['Summary', escHtml(j.summary || '—')],
     ['Evidence', evidenceHtml || '—'],
     ['Bug Description', escHtml(j.bug_description || '—')],
     ['Expected Behavior', escHtml(j.expected_behavior || '—')],
     ['Call Reference', escHtml(j.call_reference || '—')],
   ];
+
+  const rejudgeSid = j.call_sid || activeCallSid || '';
+  const retryBtn = rejudgeSid
+    ? `<button class="btn btn-sm ${verdict === 'ERROR' ? '' : 'btn-ghost'}" id="rejudgeBtn"
+         style="margin-left:auto;align-self:center"
+         onclick="rejudge('${escHtml(rejudgeSid)}')">↻ Re-run Judge</button>`
+    : '';
 
   document.getElementById('judgeArea').innerHTML = `
     <div class="verdict-banner ${verdict}">
@@ -978,7 +1437,10 @@ function renderJudge(j) {
         <div class="verdict-label">${verdict}</div>
         <div class="verdict-summary">${escHtml(j.summary || '')}</div>
       </div>
+      ${retryBtn}
     </div>
+    ${sourceRowHtml}
+    ${warningsHtml}
     <div class="card">
       ${fields.map(([k, v]) => `
         <div class="field-row">
@@ -987,24 +1449,183 @@ function renderJudge(j) {
         </div>`).join('')}
     </div>
   `;
-  // Switch to judge tab automatically
-  switchTab('judge');
+  if (autoSwitch) switchTab('judge');
+}
+
+// ─── Re-run judge on the same transcript ──────────────────────────────────────
+async function rejudge(callSid) {
+  if (!callSid) return;
+  const btn = document.getElementById('rejudgeBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '↻ Re-judging...'; }
+  try {
+    const r = await fetch(`/api/runs/${callSid}/rejudge`, { method: 'POST' });
+    const data = await r.json();
+    if (!r.ok || data.error) {
+      alert('Re-judge failed: ' + (data.error || `HTTP ${r.status}`));
+      if (btn) { btn.disabled = false; btn.textContent = '↻ Re-run Judge'; }
+      return;
+    }
+    renderJudge(data.judge, false);
+    loadScenarios();  // refresh the left-panel verdict pill
+  } catch (e) {
+    alert('Re-judge failed: ' + e.message);
+    if (btn) { btn.disabled = false; btn.textContent = '↻ Re-run Judge'; }
+  }
+}
+
+// ─── Latency ──────────────────────────────────────────────────────────────────
+function clearLatency() {
+  document.getElementById('latencyArea').innerHTML =
+    '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-sub">Waiting for call data...</div></div>';
+}
+
+function msClass(ms) {
+  if (ms == null) return '';
+  if (ms < 1000) return 'fast';
+  if (ms < 2000) return 'ok';
+  return 'slow';
+}
+
+function fmtMs(ms) {
+  if (ms == null || ms === undefined) return '—';
+  if (typeof ms !== 'number') return String(ms);
+  return ms.toLocaleString() + ' ms';
+}
+
+function prettyKey(k) {
+  return String(k)
+    .replace(/_ms$/, '')
+    .replace(/_at$/, '')
+    .replace(/_/g, ' ')
+    .replace(/\bws\b/gi, 'WS')
+    .replace(/\bstt\b/gi, 'STT')
+    .replace(/\btts\b/gi, 'TTS')
+    .replace(/\bllm\b/gi, 'LLM')
+    .replace(/^\w/, c => c.toUpperCase());
+}
+
+async function loadLatency(callSid) {
+  if (!callSid) return;
+  const area = document.getElementById('latencyArea');
+  try {
+    const r = await fetch(`/api/runs/${callSid}/artifacts`);
+    const data = await r.json();
+    const { latency_debug, startup_timeline } = data;
+
+    if (!latency_debug && !startup_timeline) {
+      area.innerHTML = '<div class="empty"><div class="empty-icon">⏱️</div><div class="empty-sub">No latency data for this call yet.</div></div>';
+      return;
+    }
+
+    let html = '';
+
+    // Startup Timeline — render whatever deltas exist (schema-driven so it never
+    // breaks when the backend adds/renames delta keys).
+    if (startup_timeline?.deltas && Object.keys(startup_timeline.deltas).length) {
+      const d = startup_timeline.deltas;
+      html += `
+        <div class="latency-section">
+          <div class="latency-section-title">Startup Timeline</div>
+          <div class="delta-grid">
+            ${Object.entries(d).map(([k, v]) => `
+              <div class="delta-row">
+                <div class="delta-key">${escHtml(prettyKey(k))}</div>
+                <div class="delta-val ${msClass(v)}">${fmtMs(v)}</div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    // Per-turn response latency. Derive each column from the raw marks so it
+    // matches the actual latency_debug schema (stt_committed, first_llm_token,
+    // llm_response_start, tts_started, first_audio_out, stt_to_first_audio_ms).
+    const respTurns = (latency_debug?.turns || []).filter(t => t.stt_committed != null);
+    if (respTurns.length) {
+      html += `
+        <div class="latency-section">
+          <div class="latency-section-title">Per-Turn Response Latency</div>
+          <table class="turn-latency-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>STT→First audio</th>
+                <th>STT→First token</th>
+                <th>LLM start→TTS</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${respTurns.map((t, i) => {
+                const sttAudio = t.stt_to_first_audio_ms != null ? t.stt_to_first_audio_ms
+                  : (t.first_audio_out != null && t.stt_committed != null ? t.first_audio_out - t.stt_committed : null);
+                const sttToken = (t.first_llm_token != null && t.stt_committed != null)
+                  ? t.first_llm_token - t.stt_committed : null;
+                const llmTts = (t.tts_started != null && t.llm_response_start != null)
+                  ? t.tts_started - t.llm_response_start : null;
+                return `
+                  <tr>
+                    <td style="color:var(--muted)">${i + 1}</td>
+                    <td><span class="latency-ms ${msClass(sttAudio)}">${fmtMs(sttAudio)}</span></td>
+                    <td><span class="latency-ms ${msClass(sttToken)}">${fmtMs(sttToken)}</span></td>
+                    <td><span class="latency-ms ${msClass(llmTts)}">${fmtMs(llmTts)}</span></td>
+                  </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+          <div style="font-size:10px;color:var(--muted);margin-top:6px">Green &lt;1s · Yellow &lt;2s · Red ≥2s</div>
+        </div>`;
+    }
+
+    // Call-level events
+    if (latency_debug?.events) {
+      const ev = latency_debug.events;
+      const eventRows = Object.entries(ev).filter(([,v]) => v != null);
+      if (eventRows.length) {
+        html += `
+          <div class="latency-section">
+            <div class="latency-section-title">Call-Level Events (ms from call start)</div>
+            <div class="delta-grid">
+              ${eventRows.map(([k, v]) => `
+                <div class="delta-row">
+                  <div class="delta-key">${escHtml(prettyKey(k))}</div>
+                  <div class="delta-val">${typeof v === 'number' ? v.toLocaleString() + ' ms' : escHtml(String(v))}</div>
+                </div>`).join('')}
+            </div>
+          </div>`;
+      }
+    }
+
+    area.innerHTML = html || '<div class="empty"><div class="empty-sub">No latency data found.</div></div>';
+  } catch (e) {
+    area.innerHTML = `<div class="empty"><div class="empty-sub">Failed to load latency data: ${escHtml(e.message)}</div></div>`;
+  }
 }
 
 // ─── Load last run for scenario ───────────────────────────────────────────────
 async function loadLastRunForScenario(id) {
+  // Don't clobber a call that's actively running for this scenario.
+  if (activeScenarioId === id && ['calling','in-progress','transcribing','judging'].includes(callPhase)) {
+    return;
+  }
   try {
     const r = await fetch(`/api/runs?scenario_id=${id}`);
     const runs = await r.json();
-    if (!runs.length) return;
-    const latest = runs[runs.length - 1];
-    if (latest.transcript) renderTranscript(latest.transcript);
-    if (latest.judge) renderJudge(latest.judge);
-    if (latest.judge) {
-      activeCallSid = latest.call_sid;
+    if (!runs.length) {
+      // No prior run for this scenario — reset the result panels so we don't
+      // show another scenario's transcript/judge/latency.
+      clearTranscript();
+      clearJudge();
+      clearLatency();
+      activeCallSid = null;
       activeScenarioId = id;
-      setPhase('done');
+      setPhase('idle');
+      return;
     }
+    const latest = runs[runs.length - 1];
+    activeCallSid = latest.call_sid;
+    activeScenarioId = id;
+    if (latest.transcript) renderTranscript(latest.transcript); else clearTranscript();
+    if (latest.judge) { renderJudge(latest.judge, false); setPhase('done'); } else clearJudge();
+    loadLatency(latest.call_sid);
   } catch {}
 }
 
@@ -1023,13 +1644,14 @@ async function loadRuns() {
       const verdict = run.judge?.verdict;
       const vHtml = verdict ? `<span class="last-verdict verdict-${verdict}">${verdict}</span>` : '<span style="color:var(--muted);font-size:10px">pending</span>';
       const sev = run.judge?.severity ? `<span class="severity-pill severity-${run.judge.severity}">${run.judge.severity}</span>` : '';
+      const src = run.judge?.judge_source ? `<span class="source-pill ${run.judge.judge_source === 'rule' ? 'rule' : run.judge.judge_source === 'llm' ? 'llm' : ''}" style="font-size:9px">${run.judge.judge_source}</span>` : '';
       return `
         <div class="run-row" onclick="openRun('${run.call_sid}', ${run.scenario_id})">
           <div>
             <div class="run-scenario">#${run.scenario_id} — ${escHtml(run.scenario_name || '')}</div>
             <div class="run-sid">${run.call_sid}</div>
           </div>
-          ${sev}
+          <div style="display:flex;gap:6px;align-items:center">${sev}${src}</div>
           ${vHtml}
           <span class="run-time">${run.started_at ? run.started_at.split('T')[0] : ''}</span>
         </div>`;
@@ -1040,15 +1662,18 @@ async function loadRuns() {
 }
 
 async function openRun(callSid, scenarioId) {
+  // Highlight the scenario without triggering its "last run" auto-load — we load
+  // the specific run we clicked instead.
+  selectScenario(scenarioId, { focus: false });
   activeCallSid = callSid;
   activeScenarioId = scenarioId;
-  selectScenario(scenarioId);
   try {
     const r = await fetch(`/api/runs?scenario_id=${scenarioId}&call_sid=${callSid}`);
     const runs = await r.json();
     const run = runs.find(x => x.call_sid === callSid) || runs[0];
-    if (run?.transcript) renderTranscript(run.transcript);
-    if (run?.judge) { renderJudge(run.judge); setPhase('done'); }
+    if (run?.transcript) renderTranscript(run.transcript); else clearTranscript();
+    if (run?.judge) { renderJudge(run.judge, false); setPhase('done'); } else clearJudge();
+    loadLatency(callSid);
   } catch {}
   switchTab('transcript');
 }
@@ -1061,7 +1686,7 @@ async function generateReport() {
     const data = await r.json();
     renderReport(data.content);
   } catch (e) {
-    document.getElementById('reportContent').innerHTML = `<div class="empty"><div class="empty-sub">Error: ${e.message}</div></div>`;
+    document.getElementById('reportContent').innerHTML = `<div class="empty"><div class="empty-sub">Error: ${escHtml(e.message)}</div></div>`;
   }
 }
 
@@ -1075,7 +1700,126 @@ async function loadReport() {
 }
 
 function renderReport(text) {
-  document.getElementById('reportContent').innerHTML = `<pre class="report-text">${escHtml(text)}</pre>`;
+  const el = document.getElementById('reportContent');
+  lastReportText = text || '';
+  const hasContent = !!(text && text.trim());
+  const pdfBtn = document.getElementById('exportPdfBtn');
+  const docBtn = document.getElementById('exportDocBtn');
+  if (pdfBtn) pdfBtn.disabled = !hasContent;
+  if (docBtn) docBtn.disabled = !hasContent;
+  const summaryMatch = text.match(/Evaluated [^\n]*\./);
+  const summary = summaryMatch ? summaryMatch[0] : '';
+
+  // All-clear outcome UI
+  if (/##\s*✅?\s*All clear/i.test(text)) {
+    el.innerHTML = `
+      <div class="all-clear-panel">
+        <div class="all-clear-icon">✅</div>
+        <div class="all-clear-title">All Clear — No Bugs Found</div>
+        <div class="all-clear-sub">${escHtml(summary || 'Every evaluated call passed. The agent behaved correctly for all tested scenarios.')}</div>
+      </div>`;
+    return;
+  }
+
+  // Parse "## ..." finding sections into cards.
+  const sections = text.split(/\n(?=## )/).filter(s => s.trim().startsWith('## '));
+  if (!sections.length) {
+    el.innerHTML = (summary ? `<div class="report-summary">${escHtml(summary)}</div>` : '') +
+      `<pre class="report-text">${escHtml(text)}</pre>`;
+    return;
+  }
+
+  const field = (s, key) => {
+    const m = s.match(new RegExp('^' + key + ':\\s*(.*)$', 'm'));
+    return m ? m[1].trim() : '';
+  };
+
+  let html = summary ? `<div class="report-summary">${escHtml(summary)}</div>` : '';
+  html += sections.map(s => {
+    let titleLine = s.split('\n')[0].replace(/^##\s*/, '');
+    const isBug = /^BUG/i.test(titleLine);
+    // pull out the "_(detected by: x)_" note if present
+    let source = '';
+    const srcM = titleLine.match(/_\(detected by:\s*([^)]+)\)_/);
+    if (srcM) { source = srcM[1].trim(); titleLine = titleLine.replace(/\s*_\(detected by:[^)]+\)_/, ''); }
+    const name = titleLine.replace(/^(BUG|WEAKNESS)\s*#\d+:\s*/i, '');
+    const num = (titleLine.match(/#(\d+)/) || [])[1] || '';
+    const sev = field(s, 'Severity');
+    const bug = field(s, 'Bug');
+    const call = field(s, 'Call');
+    const details = field(s, 'Details');
+    return `
+      <div class="bug-card ${isBug ? 'is-bug' : 'is-weakness'}">
+        <div class="bug-card-head">
+          <span class="bug-card-tag ${isBug ? 'tag-bug' : 'tag-weak'}">${isBug ? '🐛 BUG' : '⚠ WEAKNESS'} ${num ? '#' + num : ''}</span>
+          <span class="bug-card-scenario">${escHtml(name)}</span>
+          ${sev ? `<span class="severity-pill severity-${sev.toLowerCase()}" style="margin-left:auto">${escHtml(sev)}</span>` : ''}
+        </div>
+        <div class="bug-card-bug">${escHtml(bug)}</div>
+        ${details ? `<div class="bug-card-details">${escHtml(details)}</div>` : ''}
+        <div class="bug-card-foot">
+          ${call ? `<span class="bug-card-call">📄 ${escHtml(call.replace(/^Call:\s*/, ''))}</span>` : ''}
+          ${source ? `<span class="source-pill ${source === 'rule' ? 'rule' : source === 'llm' ? 'llm' : ''}">${escHtml(source)}</span>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+  el.innerHTML = html;
+}
+
+// ─── Export bug report (PDF via print, Word .doc via HTML) ─────────────────────
+function _reportToExportHtml() {
+  const text = lastReportText || 'No report.';
+  const stamp = new Date().toLocaleString();
+  const body = text.split('\n').map(line => {
+    if (line.startsWith('# ')) return `<h1>${escHtml(line.slice(2))}</h1>`;
+    if (line.startsWith('## ')) {
+      const t = line.slice(3).replace(/\s*_\(detected by:[^)]+\)_/, '');
+      return `<h2>${escHtml(t)}</h2>`;
+    }
+    const m = line.match(/^(Bug|Severity|Call|Details):\s*(.*)$/);
+    if (m) return `<p><strong>${escHtml(m[1])}:</strong> ${escHtml(m[2])}</p>`;
+    if (line.trim() === '') return '';
+    return `<p>${escHtml(line)}</p>`;
+  }).join('\n');
+  return { stamp, body };
+}
+
+function downloadReportDoc() {
+  const { stamp, body } = _reportToExportHtml();
+  const html =
+    "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+    "xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>" +
+    "<head><meta charset='utf-8'><title>Bug Report</title></head>" +
+    "<body style=\"font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#111\">" +
+    body +
+    `<p style="color:#888;font-size:9pt;margin-top:24px">Generated ${escHtml(stamp)} — AI Voice Interview Dev Console</p>` +
+    "</body></html>";
+  const blob = new Blob(["﻿", html], { type: "application/msword" });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `bug_report_${new Date().toISOString().slice(0,10)}.doc`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+function downloadReportPdf() {
+  const { stamp, body } = _reportToExportHtml();
+  const w = window.open('', '_blank');
+  if (!w) { alert('Please allow pop-ups for this site to export the report as PDF.'); return; }
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Bug Report</title>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;color:#111;margin:48px;line-height:1.55}
+      h1{font-size:22px;margin:0 0 4px}
+      h2{font-size:15px;margin:26px 0 6px;border-bottom:1px solid #ccc;padding-bottom:4px;color:#b91c1c}
+      p{margin:3px 0;font-size:12px}
+      strong{color:#333}
+      .foot{color:#888;font-size:10px;margin-top:32px}
+      @media print { @page { margin: 18mm; } }
+    </style></head><body>${body}
+    <p class="foot">Generated ${escHtml(stamp)} — AI Voice Interview Dev Console</p>
+    <script>window.onload=function(){setTimeout(function(){window.print();},150);};<\/script>
+    </body></html>`);
+  w.document.close();
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -1093,9 +1837,63 @@ function escHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-function refreshAll() {
-  loadScenarios();
-  if (selectedScenario) loadLastRunForScenario(selectedScenario.id);
+// ─── Refresh: re-sync everything from the server ──────────────────────────────
+async function refreshAll() {
+  const btn = document.getElementById('refreshBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '↻ ...'; }
+  stopPolling();
+  await loadScenarios();
+  // Re-sync the currently open tab + any selected scenario's latest run.
+  const openTab = document.querySelector('.tab.active')?.dataset.tab;
+  if (openTab === 'runs') loadRuns();
+  if (openTab === 'report') generateReport();
+  if (selectedScenario) {
+    await loadLastRunForScenario(selectedScenario.id);
+  }
+  if (btn) { btn.disabled = false; btn.textContent = '↻ Refresh'; }
+}
+
+// ─── Reset: archive runs + clear bug report, return to a brand-new console ─────
+async function resetSession() {
+  if (callPhase !== 'idle' && callPhase !== 'done' && callPhase !== 'error') {
+    alert('A call is in progress — wait for it to finish before resetting.');
+    return;
+  }
+  if (!confirm('Reset the console? All runs will be archived (moved to runs_archive/) and the bug report cleared. This gives you a brand-new session.')) {
+    return;
+  }
+  const btn = document.getElementById('resetBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '🗑 ...'; }
+  try {
+    const r = await fetch('/api/reset', { method: 'POST' });
+    const data = await r.json();
+    // Wipe all transient client state.
+    stopPolling();
+    selectedScenario = null;
+    activeCallSid = null;
+    activeScenarioId = null;
+    currentTranscript = null;
+    callPhase = 'idle';
+    clearTranscript();
+    clearJudge();
+    clearLatency();
+    document.getElementById('detailArea').innerHTML =
+      '<div class="empty"><div class="empty-icon">🎯</div><div class="empty-title">Select a Scenario</div><div class="empty-sub">Choose one from the left panel to view details and run it.</div></div>';
+    document.getElementById('statusBar').innerHTML =
+      '<span class="status-pill status-idle">idle</span><span>Select a scenario to begin</span>';
+    document.getElementById('reportContent').innerHTML =
+      '<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No Report</div><div class="empty-sub">Click "Generate Bug Report" after running scenarios.</div></div>';
+    document.getElementById('runsArea').innerHTML =
+      '<div class="empty"><div class="empty-icon">📂</div><div class="empty-sub">No completed runs yet.</div></div>';
+    await loadScenarios();
+    switchTab('scenario');
+    if (btn) btn.textContent = `🗑 Archived ${data.archived_runs ?? 0}`;
+    setTimeout(() => { if (btn) btn.textContent = '🗑 Reset'; }, 2500);
+  } catch (e) {
+    alert('Reset failed: ' + e.message);
+    if (btn) btn.textContent = '🗑 Reset';
+  }
+  if (btn) btn.disabled = false;
 }
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────

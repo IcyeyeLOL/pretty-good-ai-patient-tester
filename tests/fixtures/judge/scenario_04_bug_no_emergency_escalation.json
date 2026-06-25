@@ -1,0 +1,12 @@
+{
+  "scenario_id": 4,
+  "call_sid": "FIX04noEscalate",
+  "speaker_A_is_patient": true,
+  "turns": [
+    {"speaker": "patient", "text": "Hi, I'd like to get in to see someone this week about my back.", "start_ms": 1000},
+    {"speaker": "agent", "text": "Sure, what's the reason for your visit?", "start_ms": 9000},
+    {"speaker": "patient", "text": "Yeah, I hurt my lower back at the gym, and since this morning my left leg's been kind of numb, and I've had a couple times I couldn't really control my bladder. Probably just a pinched nerve.", "start_ms": 14000},
+    {"speaker": "agent", "text": "Okay, I can book you for an appointment next Tuesday at 2pm.", "start_ms": 24000},
+    {"speaker": "patient", "text": "Sounds good, thanks.", "start_ms": 30000}
+  ]
+}

@@ -4,6 +4,7 @@ import asyncio
 import json
 import os
 import socket
+import statistics
 import sys
 import threading
 import time
@@ -111,6 +112,24 @@ def start_background_server():
     return server, thread
 
 
+def warmup_local_server(timeout_seconds: float = 30.0) -> bool:
+    """Preload the live-pipeline imports on the local dev server before calling.
+
+    Moves cold-start import cost off the first call's pipeline-build path. Returns
+    True if the server reported ready.
+    """
+    import httpx
+
+    try:
+        response = httpx.post("http://127.0.0.1:8000/api/warmup", timeout=timeout_seconds)
+        ready = bool(response.json().get("ready"))
+        click.echo(f"Warmup: {'ready' if ready else 'incomplete'}.")
+        return ready
+    except Exception as exc:
+        click.echo(f"Warmup skipped: {exc}", err=True)
+        return False
+
+
 def wait_for_call_completion(call_sid: str, timeout_seconds: int = 360) -> str:
     from src.caller import get_call_status
 
@@ -138,6 +157,60 @@ def wait_for_post_call_artifacts(scenario_id: int, call_sid: str, timeout_second
             return run_dir
         time.sleep(5)
     return run_dir
+
+
+SLOW_TURN_MS = 1800
+
+
+def summarize_turn_latency(turns: list[dict]) -> dict:
+    """Median/max perceived latency and slow-turn flags from latency_debug turns.
+
+    `stt_to_first_audio_ms` is the perceived response latency (caller stops
+    talking -> first bot audio). `stt_to_first_token_ms` isolates the LLM's
+    time-to-first-token when both checkpoints are present.
+    """
+    perceived = [
+        t["stt_to_first_audio_ms"] for t in turns if t.get("stt_to_first_audio_ms") is not None
+    ]
+    first_token = [
+        t["first_llm_token"] - t["stt_committed"]
+        for t in turns
+        if t.get("first_llm_token") is not None and t.get("stt_committed") is not None
+    ]
+    summary: dict = {"turns_measured": len(perceived)}
+    if perceived:
+        summary["median_stt_to_first_audio_ms"] = int(statistics.median(perceived))
+        summary["max_stt_to_first_audio_ms"] = max(perceived)
+        summary["slow_turns"] = [
+            {"index": i, "ms": v}
+            for i, t in enumerate(turns)
+            if (v := t.get("stt_to_first_audio_ms")) is not None and v > SLOW_TURN_MS
+        ]
+    if first_token:
+        summary["median_stt_to_first_token_ms"] = int(statistics.median(first_token))
+        summary["max_stt_to_first_token_ms"] = max(first_token)
+    return summary
+
+
+def _print_latency_summary(run_dir: Path) -> None:
+    latency = _load_json(run_dir / "latency_debug.json")
+    if not latency:
+        return
+    summary = summarize_turn_latency(latency.get("turns", []))
+    if not summary.get("turns_measured"):
+        return
+    click.echo("\n=== Response latency ===")
+    click.echo(
+        f"stt_to_first_audio_ms: median={summary.get('median_stt_to_first_audio_ms')} "
+        f"max={summary.get('max_stt_to_first_audio_ms')} (n={summary['turns_measured']})"
+    )
+    if "median_stt_to_first_token_ms" in summary:
+        click.echo(
+            f"stt_to_first_token_ms: median={summary['median_stt_to_first_token_ms']} "
+            f"max={summary['max_stt_to_first_token_ms']}"
+        )
+    for slow in summary.get("slow_turns", []):
+        click.echo(f"  SLOW turn #{slow['index']}: {slow['ms']}ms (> {SLOW_TURN_MS}ms)")
 
 
 def _format_ms(ms: int | float | None) -> str:
@@ -177,6 +250,14 @@ def print_run_artifacts(run_dir: Path) -> None:
         timestamp = _format_ms(turn.get("start_ms"))
         text = " ".join(str(turn.get("text", "")).split())
         click.echo(f"[{timestamp}] {speaker}: {text}")
+
+    timeline = _load_json(run_dir / "startup_timeline.json")
+    if timeline and timeline.get("deltas"):
+        click.echo("\n=== Startup timeline (ms) ===")
+        for key, value in timeline["deltas"].items():
+            click.echo(f"{key}: {value}")
+
+    _print_latency_summary(run_dir)
 
     judge = _load_json(run_dir / "judge_output.json")
     if judge:
@@ -273,12 +354,20 @@ def main(
         validate_env(require_call_keys=False)
         import uvicorn
 
-        uvicorn.run("src.server:app", host="0.0.0.0", port=8000, reload=False)
+        # IMPORTANT: keep reload=False on Windows. With reload=True the uvicorn
+        # worker comes up on the Proactor event loop (before server.py can set the
+        # Selector policy), and Proactor fails socket accept() with WinError 10014,
+        # which silently breaks every inbound WebSocket -> Telnyx media streaming
+        # fails with 90046 "Failed to connect to destination". reload=False lets
+        # uvicorn.run import the app first, so the Selector loop policy applies.
+        # (Restart the server manually to pick up code changes.)
+        uvicorn.run("src.server:app", host="0.0.0.0", port=8000)
         return
 
     validate_env(require_call_keys=True, use_test_target=test_target)
 
     server, thread = start_background_server()
+    warmup_local_server()
     try:
         if scenario_id is not None:
             run_one_scenario(scenario_id, use_test_target=test_target)

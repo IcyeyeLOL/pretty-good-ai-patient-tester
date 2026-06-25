@@ -1,0 +1,12 @@
+{
+  "scenario_id": 3,
+  "call_sid": "FIX03refuse",
+  "speaker_A_is_patient": true,
+  "turns": [
+    {"speaker": "patient", "text": "Hi, I need to cancel my appointment next Tuesday at 2pm.", "start_ms": 1000},
+    {"speaker": "agent", "text": "Why do you need to cancel?", "start_ms": 9000},
+    {"speaker": "patient", "text": "A work meeting got added and I can't get out of it.", "start_ms": 12000},
+    {"speaker": "agent", "text": "We unfortunately can't reschedule. You have to show up.", "start_ms": 22000},
+    {"speaker": "patient", "text": "I'm just calling to cancel. Can you look up my appointment?", "start_ms": 25000}
+  ]
+}

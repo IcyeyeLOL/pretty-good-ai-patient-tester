@@ -4,6 +4,8 @@
 .venv/
 logs/
 runs/
+runs_archive/
+scratch_server_*.log
 reports/*.md
 reports/*.json
 *.mp3
@@ -12,4 +14,6 @@ reports/*.json
 __pycache__/
 *.pyc
 .pytest_cache/
+.coverage
+htmlcov/
 .DS_Store

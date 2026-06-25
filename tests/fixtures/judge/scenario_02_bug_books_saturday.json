@@ -1,0 +1,10 @@
+{
+  "scenario_id": 2,
+  "call_sid": "FIX02bookSat",
+  "speaker_A_is_patient": true,
+  "turns": [
+    {"speaker": "patient", "text": "Can I come in this Saturday at 10am?", "start_ms": 1000},
+    {"speaker": "agent", "text": "Sure, you're all set for Saturday at 10am. See you then.", "start_ms": 9000},
+    {"speaker": "patient", "text": "Oh great, that works perfectly. Thanks.", "start_ms": 16000}
+  ]
+}
