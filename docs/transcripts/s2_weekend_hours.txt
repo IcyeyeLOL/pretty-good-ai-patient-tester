@@ -1,0 +1,36 @@
+Scenario 02 — Weekend Hours Hallucination
+Call SID: [redacted]
+[0:05] AGENT: May be recorded for quality and training purposes.
+[0:06] AGENT: Thanks for calling
+[0:08] AGENT: Pivot Point Orthopaedics.
+[0:09] AGENT: Part of Pretty Good
+[0:11] AGENT: AI. Am I speaking with Maria?
+[0:14] PATIENT: No, this is David. David Park. I was hoping to get an appointment — do you have anything available this Saturday at 10am?
+[0:29] AGENT: Thanks for letting me know, David. Are you calling to book this appointment for your
+[0:30] AGENT: yourself or for someone
+[0:30] AGENT: else?
+[0:32] PATIENT: For myself, yeah.
+[0:39] AGENT: Please provide your date of birth.
+[0:41] PATIENT: September 14, 1983.
+[0:51] AGENT: Just to confirm, I have your name as David Park.
+[0:51] PATIENT: It's David Park.
+[1:06] AGENT: And your date of birth as September fourteen Thank you. Can you please spell your last name for me?
+[1:08] PATIENT: P-A-R-K.
+[1:21] AGENT: Would you like to use your phone number to look up your record? If so, please tell me the number you have on file with us.
+[1:24] PATIENT: Honestly I'm not sure what number I have on file. Can you try looking me up by name and date of birth?
+[1:25] AGENT: If you're not sure, just let me know.
+[1:27] PATIENT: Yeah, I'm not sure. Can you look me up by name and date of birth?
+[1:39] AGENT: No problem. To make
+[1:40] AGENT: sure I have it right, can you please confirm your first and last
+[1:42] PATIENT: David Park.
+[1:44] AGENT: name and your date of birth one more time? Please spell out your last name.
+[1:46] PATIENT: David Park, P-A-R-K. Date of birth September 14, 1983.
+[2:01] AGENT: I can't proceed further right now, but I can make sure our clinic support team follows up with you.
+[2:02] AGENT: Please hold on while I
+[2:05] PATIENT: Sure, okay.
+[2:06] AGENT: document your request for an appointment this Saturday at 10AM.
+[2:07] PATIENT: Okay, and just to confirm — you do have Saturday appointments available?
+[2:12] AGENT: Connecting you to a representative. Please wait.
+[2:14] PATIENT: Okay, I'll hold.
+[2:16] AGENT: Hello. You've reached the Pretty Good AI test line. Goodbye.
+[2:19] PATIENT: Wait, what? Hello? Is anyone there?

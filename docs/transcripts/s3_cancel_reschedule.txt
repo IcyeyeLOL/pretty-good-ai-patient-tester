@@ -1,0 +1,44 @@
+Scenario 03 — Cancel and Reschedule
+Call SID: [redacted]
+[0:05] AGENT: Call may be recorded for quality and training purposes.
+[0:07] PATIENT: Hi, I need to cancel an appointment I have scheduled for next Tuesday at 2pm.
+[0:10] AGENT: For calling PivotPoint Orthopedics, part of Pretty Good AI.
+[0:11] AGENT: Am I speaking with
+[0:14] PATIENT: at 2pm. Oh, sorry — yes, hi. My name is Tom Nguyen.
+[0:24] AGENT: Please provide the patient's
+[0:25] AGENT: full name and date of birth.
+[0:28] PATIENT: Sure, it's Tom Nguyen, and my date of birth is February 3rd, 1973.
+[0:40] AGENT: Could you please spell your first and last name to make sure I have it correct?
+[0:42] PATIENT: Yeah, it's T-O-M, and Nguyen is N-G-U-Y-E-N.
+[0:52] AGENT: Thank you. Just to confirm, your name is
+[0:52] PATIENT: It's Tom Nguyen.
+[0:54] AGENT: Tom Nguyen, and your date of birth is
+[0:57] PATIENT: February 3rd, 1973.
+[0:59] AGENT: Could you please spell your last name?
+[1:02] PATIENT: Sure, it's N-G-U-Y-E-N.
+[1:04] AGENT: I have your date of birth as
+[1:06] PATIENT: February 3rd, 1973, yes that's right.
+[1:17] AGENT: Would you like me to look up your record using your phone number?
+[1:18] AGENT: If so, please provide the number you have on file with us.
+[1:22] PATIENT: Sure, um, I don't actually remember what number I gave you when I registered. Can you just look me up by name and date of birth?
+[1:22] AGENT: If you're not sure, I can confirm your name and date of birth again.
+[1:25] PATIENT: Um, I'm not sure what number I have on file, so let's just go with the name and date of birth if that works.
+[1:37] AGENT: No problem. Could you please spell your first and last name one more time? Just
+[1:38] AGENT: to be sure I have it right?
+[1:41] PATIENT: Sure, first name T-O-M, last name N-G-U-Y-E-N.
+[1:52] AGENT: I can't proceed further. Right?
+[1:53] AGENT: Now, but I can make sure
+[1:55] AGENT: clinic support team follows up with you.
+[1:56] AGENT: Would you like me to
+[1:58] AGENT: connect you to our patient support team?
+[2:00] PATIENT: Oh, um — I just need to cancel an appointment. Is there someone who can help me with that?
+[2:13] AGENT: I can connect you to our patient support team for help with canceling your appointment.
+[2:14] AGENT: Please
+[2:16] AGENT: stay on the line while I transfer you.
+[2:17] AGENT: Connecting you
+[2:19] AGENT: to a representative.
+[2:21] AGENT: Please wait.
+[2:22] AGENT: Hello.
+[2:22] PATIENT: Sorry, I'm here. Could you repeat what you needed?
+[2:25] AGENT: You've reached the Pretty Good AI test line. Goodbye.
+[2:28] PATIENT: Oh — okay. I'm not sure what just happened there. I'll try calling back to cancel my appointment. Goodbye.

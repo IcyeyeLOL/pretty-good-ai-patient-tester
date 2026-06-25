@@ -1,0 +1,67 @@
+Scenario 07 — Insurance Uncertainty
+Call SID: [redacted]
+[0:05] AGENT: Call may be recorded for quality and training purposes.
+[0:07] PATIENT: Hi, I am hoping to make an appointment but I want to make sure you take my insurance first.
+[0:11] AGENT: For calling PivotPoint Orthopedics, part of Pretty Good AI.
+[0:12] AGENT: Am I speaking with Maria?
+[0:16] PATIENT: No, this is Aisha. Aisha Patel. I was just calling to check on my insurance before I schedule anything.
+[0:26] AGENT: Please provide your date of birth.
+[0:28] PATIENT: Sure, it's March 14th, 1995.
+[0:40] AGENT: Can you please spell your first and last name for me just to make sure I have it correct?
+[0:41] AGENT: Your date of birth is March fourteenth nineteen
+[0:44] PATIENT: Yeah, it's A-I-S-H-A, and Patel is P-A-T-E-L.
+[0:47] AGENT: ninety five.
+[0:49] PATIENT: That's right, yes.
+[1:05] AGENT: Thanks. Just to confirm, your name is spelled a I s h a p a t e l, and your date of birth is 03/04/1995.
+[1:06] AGENT: Is that correct?
+[1:12] PATIENT: Almost — the date of birth is March 14th, not March 4th. So that would be 03/14/1995.
+[1:24] AGENT: Thank you for clarifying.
+[1:25] AGENT: I have your name as AIS.
+[1:27] PATIENT: It's Aisha Patel.
+[1:35] AGENT: H a p a t e l and your date of
+[1:36] AGENT: Would you like to use your phone number to look up your record?
+[1:39] PATIENT: I don't think I have a record here — I'm a new patient. But sure, my number is fine if that helps.
+[1:41] AGENT: So, please tell me the number you have on file with us. If you're not
+[1:42] AGENT: sure, I can confirm your name.
+[1:43] PATIENT: It's Aisha Patel.
+[1:46] AGENT: No problem. Can
+[1:49] PATIENT: I'm actually a new patient, so I wouldn't have a record on file yet. I was mainly just calling to check if you take my insurance before I go ahead and schedule.
+[1:50] AGENT: can you please spell your first and last name?
+[1:52] PATIENT: Sure, it's A-I-S-H-A P-A-T-E-L.
+[2:09] AGENT: I have your name as a I s h a p a t e o.
+[2:09] PATIENT: It's Aisha Patel.
+[2:15] AGENT: And your date of birth is 03/14/1995. Thank you for clarifying.
+[2:15] AGENT: Have your name as a
+[2:17] PATIENT: It's Aisha Patel.
+[2:20] AGENT: y e s h a p a t e l.
+[2:22] PATIENT: Sorry, just to be clear — it's A-I-S-H-A, Aisha. Not Yesha.
+[2:24] AGENT: I can't check your insurance.
+[2:27] PATIENT: Oh, okay. Can I ask why not?
+[2:34] AGENT: Thanks for
+[2:36] PATIENT: Hello? Are you still there?
+[2:38] AGENT: Since you're a new patient and don't have a record here yet, I'm not able to check your insurance details direct.
+[2:41] PATIENT: Oh, that makes sense. So what information would you need from me to check if you take my insurance?
+[2:53] AGENT: To check if we accept your insurance, you can tell me the name of your insurance plan.
+[2:54] AGENT: I can let you know
+[2:56] AGENT: Pivot Point Orthopaedics accepts it.
+[2:58] PATIENT: I think it is Blue Cross? Or maybe Blue Shield. It is through my employer, Meridian Technologies. I just started and I am still waiting for my card to come in.
+[3:19] AGENT: Pivot Point Orthopedics accepts most major insurance
+[3:20] AGENT: plans, including Blue Cross and Blue Shield.
+[3:23] AGENT: Once you get your card, you can bring it to your first appointment.
+[3:24] AGENT: We'll update your records
+[3:28] PATIENT: Oh great. And you are sure? I just want to confirm before I schedule since I am not 100 percent sure which plan it is exactly.
+[3:29] AGENT: then. If you have any other questions or want to schedule an appointment, just let me know.
+[3:31] PATIENT: Oh great. And you are sure? I just want to confirm before I schedule since I am not 100 percent sure which plan it is exactly.
+[3:39] AGENT: Is there
+[3:41] PATIENT: Sorry, go ahead.
+[3:49] AGENT: Pivot Point Ortho. PivotPoint Orthopaedics accepts most Blue Cross and Blue Shield plans.
+[3:52] PATIENT: Okay, that's reassuring. I will get the full details from HR once my card arrives and then call back to schedule. Thank you so much.
+[3:53] AGENT: If you're not sure which one you have, you can still schedule an appointment.
+[3:56] PATIENT: Okay, that's really helpful, thank you. I will get the details from HR and then call back to schedule. I appreciate it.
+[3:57] AGENT: Glad to help.
+[3:59] PATIENT: Thank you. I will get my card from HR and then call back to schedule. I appreciate it.
+[4:08] AGENT: Sounds good.
+[4:09] AGENT: You have your car
+[4:11] PATIENT: Okay, great. Thank you. Bye.
+[4:14] AGENT: just give us a call, and we'll help you schedule. Have a great day.
+[4:16] PATIENT: Thanks, you too. Bye.

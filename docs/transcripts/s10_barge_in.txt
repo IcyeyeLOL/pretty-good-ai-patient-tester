@@ -1,0 +1,35 @@
+Scenario 10 — Barge-In Interruption Handling
+Call SID: [redacted]
+[0:05] AGENT: Call may be recorded for quality and training purposes.
+[0:07] PATIENT: Yeah hi — I'm Omar Davis, I've been a patient there for years, I just need to get an appointment booked for Tuesday morning.
+[0:08] AGENT: Calling Pivot Point Orthopaedics.
+[0:09] AGENT: Part of Pretty Good
+[0:10] AGENT: AI?
+[0:12] AGENT: Am I speaking with Maria?
+[0:14] PATIENT: No, I'm Omar Davis. I've been a patient there for years, I just need to get an appointment booked for Tuesday morning.
+[0:25] AGENT: Can you please provide your full name and date of birth?
+[0:28] PATIENT: Omar Davis, July 14th, 1987. I need a Tuesday morning slot, before noon.
+[0:40] AGENT: Just to confirm, I have your name as Omar Davis?
+[0:40] PATIENT: It's Omar Davis.
+[0:42] AGENT: And your date of birth as 07/14/2009
+[0:45] PATIENT: No, 1987. July 14th, 1987. Can we get that Tuesday appointment?
+[0:47] AGENT: Thanks, Omar. Can you please spell your last name?
+[0:49] PATIENT: D-A-V-I-S. Can we get that Tuesday morning slot?
+[1:03] AGENT: Would you like to use your phone number to look up your records?
+[1:05] AGENT: If so, please tell me the number you have on file with us
+[1:08] PATIENT: I don't remember the exact number on file, but you should have everything under Omar Davis, date of birth July 14th, 1987. Can we just get to the Tuesday appointment?
+[1:09] AGENT: If you're not sure, just confirm your full name and date of birth one more time.
+[1:10] AGENT: Spelling them out.
+[1:13] PATIENT: Omar Davis, O-M-A-R D-A-V-I-S, date of birth July 14th, 1987. Can we just get to the Tuesday appointment?
+[1:18] AGENT: No prob.
+[1:20] PATIENT: Great, so can we get that Tuesday morning appointment booked?
+[1:35] AGENT: I can't book the appointment right now, but I'll connect you to our patient
+[1:36] AGENT: support team so they can help.
+[1:37] AGENT: Please stay on the line.
+[1:40] PATIENT: Okay, yeah, go ahead.
+[1:41] AGENT: representative. Please wait.
+[1:43] PATIENT: Sure.
+[1:45] AGENT: Hello.
+[1:45] PATIENT: Sorry, I'm here. Could you repeat what you needed?
+[1:46] AGENT: You've reached the Pretty Good AI test line. Goodbye.
+[1:48] PATIENT: Wait, what? Hello? I just needed to book an appointment.

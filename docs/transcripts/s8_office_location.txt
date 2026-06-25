@@ -1,0 +1,69 @@
+Scenario 08 — Office Location Question
+Call SID: [redacted]
+[0:05] AGENT: This call may be recorded for quality and training purposes.
+[0:08] PATIENT: Hi there, I was hoping you could help me out. I'm thinking about becoming a patient at your practice, but before I do anything I just want to get some basic information about the office location. Is that okay?
+[0:09] AGENT: For calling PivotPoint Orthopedics.
+[0:10] AGENT: Of Pretty Good AI.
+[0:12] AGENT: Am I speaking with Maria?
+[0:14] PATIENT: No, my name is Nina, Nina Reeves. I just had a quick question about your office location if that's okay.
+[0:25] AGENT: I just need your full name and date of birth before
+[0:26] PATIENT: Sure, it's Nina Reeves, and my date of birth is March 14th, 1991.
+[0:28] AGENT: we continue. Can you please provide your date of birth?
+[0:29] PATIENT: Yeah, it's Nina Reeves and my date of birth is March 15th, 1991.
+[0:31] AGENT: Thank you, Nina.
+[0:34] PATIENT: Oh sorry, my date of birth is March 15th, 1991. Anyway, I was just hoping to get your office address — I'm thinking about becoming a patient here but I want to make sure I can actually get there first.
+[0:48] AGENT: Just to confirm, I have your name as Nina Reeves, and your date of birth is 03/15/1991?
+[0:49] AGENT: Is that correct?
+[0:51] PATIENT: Yes, that's correct.
+[0:52] AGENT: If so, could you please spell your last name for me?
+[0:54] PATIENT: Sure, it's R-E-E-V-E-S.
+[1:09] AGENT: I have your phone number as [redacted phone number].
+[1:11] PATIENT: I'm not sure where you got that number — I don't think I gave you a phone number. But that's okay, I really just had a quick question about your office address. Can you help me with that?
+[1:12] AGENT: And your date of birth is 03/15/1991.
+[1:13] AGENT: Zach? Correct?
+[1:17] PATIENT: The date of birth is right but I didn't give you a phone number — I'm not sure where that came from. But anyway, I really just had a quick question about your office address. Could you tell me where you're located?
+[1:18] AGENT: That's the number showing on my end.
+[1:20] PATIENT: Okay, that's fine, but I didn't give you a phone number. Anyway, I just wanted to ask about your office address — can you tell me where you're located?
+[1:23] AGENT: If you I have your date of
+[1:26] PATIENT: Sorry, could you say that again? I think the line cut out a little.
+[1:38] AGENT: I have your name as Nina Reeves, and your date of birth is 03/15/1991.
+[1:39] AGENT: Your phone number is
+[1:43] AGENT: [redacted phone number].
+[1:45] AGENT: This that correct?
+[1:51] PATIENT: The name and date of birth are right, yes. I can't confirm the phone number though, I didn't give you that. But honestly I just had a quick question about your office address — I'm not even scheduling anything today.
+[2:11] AGENT: No problem. Nina. Our office is called Pivot Point Orthopedics.
+[2:12] AGENT: The address is
+[2:14] PATIENT: Okay, go ahead.
+[2:21] AGENT: 1234 Recovery Way, Suite 200. Austin. The full address is Pivot Point Orthopaedics.
+[2:22] AGENT: One two three four
+[2:25] PATIENT: Got it, so 1234 Recovery Way, Suite 200. And what city was that again?
+[2:26] AGENT: Recovery Way, suite two hundred, Austin.
+[2:27] AGENT: You need anything else to just
+[2:29] AGENT: great.
+[2:30] AGENT: If you have any other
+[2:33] PATIENT: And what city and state is that? Just Austin, Texas?
+[2:33] AGENT: questions about the clinic or need help in the future, just let me know.
+[2:36] PATIENT: Oh wait, I actually had a couple more questions if you don't mind. What floor is suite 200 on?
+[2:47] AGENT: Suite 200 is on the 2nd Floor of the building.
+[2:48] AGENT: If you need
+[2:49] AGENT: else, feel free to ask.
+[2:51] PATIENT: Okay, good to know. And is it accessible by public transit? I don't have a car.
+[3:02] AGENT: I don't have details about public transit roads.
+[3:04] PATIENT: Okay, that's totally fine. Is there a website or number where I could find that information?
+[3:06] AGENT: The clinic is in Recovery Plaza Medical Building at 1234
+[3:08] PATIENT: Is there a website or number where I could find that information?
+[3:18] AGENT: You can call the clinic directly for more details about getting here.
+[3:20] PATIENT: Oh, I am calling the clinic. Is there maybe a website I could check for transit info?
+[3:21] AGENT: If you'd like, can text you the clinic's contact information.
+[3:22] AGENT: Would you like
+[3:26] PATIENT: That's okay, I think I have enough to look it up myself. Actually, one last thing — is there a particular entrance I should use, or just the main building entrance?
+[3:27] AGENT: that's right. You've reached Pivot Point Orthopedics.
+[3:30] PATIENT: Yeah, I know, I called you. Um, I think I have the address now so I can look up the transit options myself. Is there a website I can check for any other details about the office?
+[3:44] AGENT: I don't have a website to share right now.
+[3:45] AGENT: You can always call
+[3:47] AGENT: us for any questions or details about the clinic.
+[3:48] AGENT: If you need any
+[3:50] AGENT: else, just let me know.
+[3:52] PATIENT: Okay, that works. I think I have what I need for now. Thank you so much.
+[4:03] AGENT: You're welcome. Have a great day, Nina.
+[4:05] PATIENT: You too, bye.
