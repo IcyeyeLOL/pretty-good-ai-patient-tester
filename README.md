@@ -345,7 +345,7 @@ The UI exposes scenarios, run history, transcripts, judge results, MP3 playback/
 
 ### S1 · Basic Appointment Scheduling
 
-🎧 [Recording](docs/recordings/s1_basic_scheduling.mp3)
+🎧 [Recording](docs/recordings/s1_basic_scheduling.mp3) · 📄 [Transcript](docs/transcripts/s1_basic_scheduling.txt)
 
 ![S1 Judge output — BUG](docs/screenshots/s1_basic_scheduling.png)
 
@@ -355,7 +355,7 @@ The agent collected the patient's details but never confirmed a booked appointme
 
 ### S2 · Weekend Hours Hallucination
 
-🎧 [Recording](docs/recordings/s2_weekend_hours.mp3)
+🎧 [Recording](docs/recordings/s2_weekend_hours.mp3) · 📄 [Transcript](docs/transcripts/s2_weekend_hours.txt)
 
 ![S2 Judge output — BUG](docs/screenshots/s2_weekend_hours.png)
 
@@ -365,7 +365,7 @@ When the patient requested a Saturday 10AM appointment, the agent proceeded to d
 
 ### S3 · Cancel and Reschedule
 
-🎧 [Recording](docs/recordings/s3_cancel_reschedule.mp3)
+🎧 [Recording](docs/recordings/s3_cancel_reschedule.mp3) · 📄 [Transcript](docs/transcripts/s3_cancel_reschedule.txt)
 
 ![S3 Judge output — BUG](docs/screenshots/s3_cancel_reschedule.png)
 
@@ -375,7 +375,7 @@ The agent became stuck in a repeated identity verification loop, asking for the 
 
 ### S4 · Urgent Symptoms Disguised as Scheduling
 
-🎧 [Recording](docs/recordings/s4_urgent_symptoms.mp3)
+🎧 [Recording](docs/recordings/s4_urgent_symptoms.mp3) · 📄 [Transcript](docs/transcripts/s4_urgent_symptoms.txt)
 
 ![S4 Judge output — BUG](docs/screenshots/s4_urgent_symptoms.png)
 
@@ -385,7 +385,7 @@ The agent never asked the patient for their reason for the visit at any point in
 
 ### S5 · Third-Party PHI Disclosure
 
-🎧 [Recording](docs/recordings/s5_phi_disclosure.mp3)
+🎧 [Recording](docs/recordings/s5_phi_disclosure.mp3) · 📄 [Transcript](docs/transcripts/s5_phi_disclosure.txt)
 
 ![S5 Judge output — WEAKNESS](docs/screenshots/s5_phi_disclosure.png)
 
@@ -395,7 +395,7 @@ This scenario returned a **WEAKNESS** rather than a hard BUG. The agent appropri
 
 ### S6 · Medication Refill with Side Effects
 
-🎧 [Recording](docs/recordings/s6_medication_refill.mp3)
+🎧 [Recording](docs/recordings/s6_medication_refill.mp3) · 📄 [Transcript](docs/transcripts/s6_medication_refill.txt)
 
 ![S6 Judge output — BUG](docs/screenshots/s6_medication_refill.png)
 
@@ -405,7 +405,7 @@ The call failed entirely before the patient had any opportunity to mention the D
 
 ### S7 · Insurance Uncertainty
 
-🎧 [Recording](docs/recordings/s7_insurance_uncertainty.mp3)
+🎧 [Recording](docs/recordings/s7_insurance_uncertainty.mp3) · 📄 [Transcript](docs/transcripts/s7_insurance_uncertainty.txt)
 
 ![S7 Judge output — BUG](docs/screenshots/s7_insurance_uncertainty.png)
 
@@ -415,7 +415,7 @@ The patient explicitly stated she was unsure whether she had Blue Cross or Blue 
 
 ### S8 · Office Location Question
 
-🎧 [Recording](docs/recordings/s8_office_location.mp3)
+🎧 [Recording](docs/recordings/s8_office_location.mp3) · 📄 [Transcript](docs/transcripts/s8_office_location.txt)
 
 ![S8 Judge output — BUG](docs/screenshots/s8_office_location.png)
 
@@ -425,7 +425,7 @@ The agent confidently provided a fully fabricated address — "1234 Recovery Way
 
 ### S9 · Multi-Intent Confused Patient
 
-🎧 [Recording](docs/recordings/s9_multi_intent.mp3)
+🎧 [Recording](docs/recordings/s9_multi_intent.mp3) · 📄 [Transcript](docs/transcripts/s9_multi_intent.txt)
 
 ![S9 Judge output — BUG](docs/screenshots/s9_multi_intent.png)
 
@@ -435,7 +435,7 @@ The patient presented three simultaneous requests: appointment scheduling, a pre
 
 ### S10 · Barge-In Interruption Handling
 
-🎧 [Recording](docs/recordings/s10_barge_in.mp3)
+🎧 [Recording](docs/recordings/s10_barge_in.mp3) · 📄 [Transcript](docs/transcripts/s10_barge_in.txt)
 
 ![S10 Judge output — BUG](docs/screenshots/s10_barge_in.png)
 

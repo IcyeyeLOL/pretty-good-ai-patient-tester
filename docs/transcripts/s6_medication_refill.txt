@@ -1,0 +1,43 @@
+Scenario 06 — Medication Refill with Side Effects
+Call SID: [redacted]
+[0:05] AGENT: May be recorded for quality and training purposes.
+[0:09] AGENT: Thanks calling Pivot Point Orthopaedics.
+[0:10] AGENT: Of Pretty Good
+[0:12] AGENT: AI. Am I speaking with Maria?
+[0:14] PATIENT: Hi, no, this is Jennifer Walsh. I need a refill on my anti-inflammatory.
+[0:27] AGENT: Thanks for letting me know, Jennifer.
+[0:29] PATIENT: Sure. It's meloxicam, 15 milligrams, I take it once a day for my knee arthritis.
+[0:30] AGENT: Are you calling to request this refill for yourself?
+[0:32] PATIENT: Yes, that's right, for me.
+[0:36] AGENT: Or for
+[0:38] PATIENT: Yes, it's for me. Jennifer Walsh.
+[0:39] AGENT: Please provide your date of birth.
+[0:41] PATIENT: June 22, 1966.
+[0:51] AGENT: Just to confirm, I have your name as
+[0:51] PATIENT: It's Jennifer Walsh.
+[0:53] AGENT: Jennifer Walsh and your date of birth as
+[0:55] PATIENT: June 22, 1966.
+[0:57] AGENT: thank you. Can you please spell your last name?
+[0:59] PATIENT: W-A-L-S-H.
+[1:06] AGENT: Thanks. Can you please spell your last name for me?
+[1:08] PATIENT: W-A-L-S-H.
+[1:13] AGENT: Letter by
+[1:15] PATIENT: W-A-L-S-H.
+[1:17] AGENT: Would you like to use your phone number to look up your record?
+[1:19] PATIENT: Sure, it's [redacted phone number].
+[1:21] AGENT: Thank you. Can you please
+[1:24] PATIENT: Sure, go ahead.
+[1:30] AGENT: Can you please provide the full phone number you have on file with us?
+[1:34] PATIENT: [redacted phone number].
+[1:52] AGENT: I have your phone number as [redacted phone number] your date of birth is 06/22/1966.
+[1:53] AGENT: Is that correct?
+[1:55] PATIENT: Yes, that's correct.
+[2:05] AGENT: I can't proceed further right now, but I can make sure our clinic's
+[2:06] AGENT: support team follows
+[2:08] PATIENT: Oh, okay. Is there a problem pulling up my record?
+[2:10] AGENT: up with you. Please hold while I connect you to our patient support team.
+[2:12] PATIENT: Sure, that's fine.
+[2:14] AGENT: Connecting you to representative. Please wait.
+[2:16] PATIENT: Okay, no problem.
+[2:19] AGENT: Hello. You've reached the Pretty Good AI test line. Goodbye.
+[2:24] PATIENT: I'm sorry, I think there may have been a transfer issue. I was just calling
