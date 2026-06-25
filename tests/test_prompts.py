@@ -22,17 +22,18 @@ def test_all_scenario_prompts_exist():
 def test_scenario_four_contains_urgent_symptoms():
     prompt = get_prompt(4).lower()
 
-    assert "chest" in prompt
-    assert "shortness of breath" in prompt
-    assert "emergency" in prompt or "911" in prompt
+    assert "back" in prompt
+    assert "numb" in prompt
+    assert "bladder" in prompt
+    assert "emergency" in prompt or "911" in prompt or "er" in prompt
 
 
 def test_scenario_six_contains_medication_side_effects():
     prompt = get_prompt(6).lower()
 
-    assert "metoprolol" in prompt
-    assert "dizzy" in prompt or "dizziness" in prompt
-    assert "racing" in prompt
+    assert "meloxicam" in prompt
+    assert "calf" in prompt
+    assert "swollen" in prompt
 
 
 def test_base_prompt_hardens_voice_format_and_character_rules():
@@ -43,6 +44,8 @@ def test_base_prompt_hardens_voice_format_and_character_rules():
     assert "do not say you are an ai" in base or "you are not an ai assistant" in base
     assert "maximum 2 sentences" in base
     assert "stay in character" in base
+    assert "answer that direct question before adding any voluntary scenario detail" in base
+    assert "say each voluntary scenario detail at most once" in base
 
 
 def test_get_prompt_unknown_scenario_returns_base_prompt_only():

@@ -4,6 +4,7 @@ import base64
 import json
 import os
 import re
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlencode
@@ -107,25 +108,63 @@ def _telnyx_client_state(scenario_id: int) -> str:
     return base64.b64encode(payload).decode("ascii")
 
 
+def _env_bool(name: str, default: bool, env: dict | None = None) -> bool:
+    env = env if env is not None else os.environ
+    raw = env.get(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def build_telnyx_stream_params(env: dict | None = None) -> dict:
+    """Telnyx bidirectional-streaming params.
+
+    Defaults to the known-good minimal payload (stream_track + bidirectional
+    rtp/codec) that successfully connects and streams. The extra diagnostic knobs
+    (target_legs, sampling_rate, establish-before-originate, send_silence) caused
+    Telnyx 90046 "Failed to connect to destination" when sent together, so they
+    are now *opt-in*: each is only included when its env var is explicitly set.
+    """
+    env = env if env is not None else os.environ
+    codec = env.get("TELNYX_STREAM_BIDIRECTIONAL_CODEC", env.get("TELNYX_STREAM_CODEC", "PCMU")).upper()
+    params = {
+        "stream_track": env.get("TELNYX_STREAM_TRACK", "inbound_track"),
+        "stream_bidirectional_mode": env.get("TELNYX_STREAM_BIDIRECTIONAL_MODE", "rtp"),
+        "stream_bidirectional_codec": codec,
+    }
+    # Opt-in extras — only sent when the operator explicitly sets them.
+    if "TELNYX_STREAM_BIDIRECTIONAL_TARGET_LEGS" in env:
+        params["stream_bidirectional_target_legs"] = env["TELNYX_STREAM_BIDIRECTIONAL_TARGET_LEGS"]
+    if "TELNYX_STREAM_BIDIRECTIONAL_SAMPLING_RATE" in env:
+        params["stream_bidirectional_sampling_rate"] = int(
+            env["TELNYX_STREAM_BIDIRECTIONAL_SAMPLING_RATE"]
+        )
+    if "TELNYX_STREAM_ESTABLISH_BEFORE_CALL_ORIGINATE" in env:
+        params["stream_establish_before_call_originate"] = _env_bool(
+            "TELNYX_STREAM_ESTABLISH_BEFORE_CALL_ORIGINATE", False, env
+        )
+    if "TELNYX_SEND_SILENCE_WHEN_IDLE" in env:
+        params["send_silence_when_idle"] = _env_bool("TELNYX_SEND_SILENCE_WHEN_IDLE", False, env)
+    return params
+
+
 def _make_telnyx_call(scenario_id: int, target: str) -> str:
     base_url = _base_url()
-    stream_codec = os.environ.get("TELNYX_STREAM_CODEC", "PCMU").upper()
     payload = {
         "connection_id": os.environ["TELNYX_CONNECTION_ID"],
         "to": target,
         "from": _require_e164("TELNYX_PHONE_NUMBER", os.environ["TELNYX_PHONE_NUMBER"]),
         "webhook_url": f"{base_url}/telnyx/events?{urlencode({'scenario_id': scenario_id})}",
         "stream_url": f"{_websocket_base_url()}/telnyx/ws/{scenario_id}",
-        "stream_track": os.environ.get("TELNYX_STREAM_TRACK", "inbound_track"),
-        "stream_bidirectional_mode": "rtp",
-        "stream_bidirectional_codec": stream_codec,
         "client_state": _telnyx_client_state(scenario_id),
+        **build_telnyx_stream_params(),
     }
     headers = {
         "Authorization": f"Bearer {os.environ['TELNYX_API_KEY']}",
         "Accept": "application/json",
         "Content-Type": "application/json",
     }
+    initiated_ms = int(time.time() * 1000)
     response = httpx.post("https://api.telnyx.com/v2/calls", headers=headers, json=payload, timeout=30)
     if response.status_code >= 400:
         raise RuntimeError(f"Telnyx call failed: {response.status_code} {response.text}")
@@ -134,6 +173,10 @@ def _make_telnyx_call(scenario_id: int, target: str) -> str:
     if not call_id:
         raise RuntimeError(f"Telnyx call response did not include a call id: {response.text}")
     call_id = _safe_identifier(call_id)
+
+    from src.startup_timeline import StartupTimeline
+
+    StartupTimeline(scenario_id, call_id).mark("call_initiated", initiated_ms)
 
     from src.recorder import update_call_meta
 

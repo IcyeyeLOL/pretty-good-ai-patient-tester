@@ -37,6 +37,13 @@ CALL_STATUS: dict[str, str] = {}
 async def lifespan(_app: FastAPI):
     Path("runs").mkdir(exist_ok=True)
     Path("reports").mkdir(exist_ok=True)
+    try:
+        from src.warmup import warm_runtime
+
+        report = warm_runtime()
+        print(f"[DEBUG] warmup ready={report.get('ready')} failed={list(report.get('failed', {}))}")
+    except Exception as exc:
+        print(f"[DEBUG] warmup failed: {exc}")
     yield
 
 
@@ -87,7 +94,35 @@ def _telnyx_call_id(payload: dict) -> str:
 
 def _evaluate_live_transcript_if_ready(scenario_id: int, call_sid: str, turns: list[dict]) -> None:
     scenario = get_scenario(scenario_id)
-    if not scenario or not turns:
+    if not scenario:
+        return
+    if not turns:
+        # The call produced no conversation at all (e.g. the TTS provider failed /
+        # ran out of credits, so the patient never spoke). Write an ERROR verdict
+        # so the UI stops polling "judging..." forever and the failure is visible.
+        from src.judge_bot import _save_judge_output
+
+        _save_judge_output(
+            {
+                "scenario_id": scenario_id,
+                "scenario_name": scenario.name,
+                "call_sid": call_sid,
+                "verdict": "ERROR",
+                "severity": None,
+                "summary": "No conversation was captured — the call produced no audio. "
+                "Check the TTS provider (e.g. Cartesia credits) and try again.",
+                "evidence": None,
+                "bug_description": None,
+                "expected_behavior": None,
+                "call_reference": None,
+                "judge_source": "none",
+                "rule_verdict": None,
+                "llm_verdict": None,
+                "validation_warnings": ["Empty transcript; the call failed before any turns were exchanged."],
+            },
+            scenario_id,
+            call_sid,
+        )
         return
     transcript = {
         "scenario_id": scenario_id,
@@ -96,6 +131,67 @@ def _evaluate_live_transcript_if_ready(scenario_id: int, call_sid: str, turns: l
         "speaker_labels": "patient/agent",
     }
     evaluate(transcript, scenario)
+
+
+# Maps Telnyx webhook event_type -> startup timeline mark name.
+_TELNYX_EVENT_MARKS = {
+    "call.answered": "call_answered",
+    "streaming.started": "streaming_started",
+    "call.streaming.started": "streaming_started",
+    "call.hangup": "telnyx_hangup",
+}
+
+
+def _mark_ws_timeline(scenario_id: int, call_sid: str, ws_accepted_ms: int, ws_start_ms: int) -> None:
+    try:
+        from src.startup_timeline import StartupTimeline
+
+        timeline = StartupTimeline(scenario_id, call_sid)
+        timeline.mark("ws_accepted", ws_accepted_ms)
+        timeline.mark("ws_start_event", ws_start_ms)
+    except Exception as exc:
+        print(f"[DEBUG] startup timeline ws mark failed: {exc}")
+
+
+def _mark_pipeline_build_started(scenario_id: int, call_sid: str) -> None:
+    try:
+        from src.startup_timeline import StartupTimeline
+
+        StartupTimeline(scenario_id, call_sid).mark("pipeline_build_started")
+    except Exception as exc:
+        print(f"[DEBUG] startup timeline build-start mark failed: {exc}")
+
+
+def _mark_timeline_from_event(scenario_id: int, call_sid: str, event_type: str) -> None:
+    mark = _TELNYX_EVENT_MARKS.get(event_type)
+    if not mark:
+        return
+    try:
+        from src.startup_timeline import StartupTimeline
+
+        StartupTimeline(scenario_id, call_sid).mark(mark)
+    except Exception as exc:
+        print(f"[DEBUG] startup timeline mark failed: {exc}")
+
+
+def _finalize_telnyx_event_log(bundle) -> None:
+    log = getattr(bundle, "telnyx_event_log", None) if bundle else None
+    if log is None:
+        return
+    try:
+        log.finalize()
+    except Exception as exc:
+        print(f"[DEBUG] telnyx event log finalize failed: {exc}")
+
+
+def _close_live_recorder(bundle) -> str | None:
+    if not bundle or not getattr(bundle, "live_recorder", None):
+        return None
+    try:
+        return bundle.live_recorder.close()
+    except Exception as exc:
+        print(f"[DEBUG] live recorder close failed: {exc}")
+        return None
 
 
 async def _form_data(request: Request) -> dict[str, str]:
@@ -136,6 +232,7 @@ async def websocket_endpoint(websocket: WebSocket, scenario_id: int):
     call_sid = "unknown"
     stream_sid = None
     turns: list[dict] = []
+    bundle = None
 
     try:
         while True:
@@ -174,6 +271,7 @@ async def websocket_endpoint(websocket: WebSocket, scenario_id: int):
             (run_dir / "websocket_error.txt").write_text(str(exc), encoding="utf-8")
     finally:
         if call_sid != "unknown":
+            _close_live_recorder(bundle)
             save_live_transcript(turns, scenario_id, call_sid)
             update_call_meta(scenario_id, call_sid, ended_at=_utc_now())
 
@@ -181,15 +279,18 @@ async def websocket_endpoint(websocket: WebSocket, scenario_id: int):
 @app.websocket("/telnyx/ws/{scenario_id}")
 async def telnyx_websocket_endpoint(websocket: WebSocket, scenario_id: int):
     await websocket.accept()
+    ws_accepted_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
     call_sid = "unknown"
     stream_id = None
     inbound_encoding = "PCMU"
     outbound_encoding = "PCMU"
     turns: list[dict] = []
+    bundle = None
 
     try:
         while True:
             raw_message = await websocket.receive_text()
+            ws_start_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
             message = json.loads(raw_message)
             if message.get("event") != "start":
                 continue
@@ -208,6 +309,7 @@ async def telnyx_websocket_endpoint(websocket: WebSocket, scenario_id: int):
 
             if call_sid != "unknown":
                 ACTIVE_CALLS[call_sid] = scenario_id
+                _mark_ws_timeline(scenario_id, call_sid, ws_accepted_ms, ws_start_ms)
                 update_call_meta(
                     scenario_id,
                     call_sid,
@@ -226,6 +328,8 @@ async def telnyx_websocket_endpoint(websocket: WebSocket, scenario_id: int):
             await websocket.close(code=1011)
             return
 
+        if call_sid != "unknown":
+            _mark_pipeline_build_started(scenario_id, call_sid)
         bundle = build_pipeline(
             scenario_id=scenario_id,
             websocket=websocket,
@@ -246,6 +350,8 @@ async def telnyx_websocket_endpoint(websocket: WebSocket, scenario_id: int):
             (run_dir / "websocket_error.txt").write_text(str(exc), encoding="utf-8")
     finally:
         if call_sid != "unknown":
+            _finalize_telnyx_event_log(bundle)
+            _close_live_recorder(bundle)
             save_live_transcript(turns, scenario_id, call_sid)
             update_call_meta(
                 scenario_id,
@@ -277,6 +383,7 @@ async def telnyx_events(request: Request):
         CALL_STATUS[call_sid] = "completed" if event_type == "call.hangup" else event_type
         if scenario_id:
             ACTIVE_CALLS[call_sid] = scenario_id
+            _mark_timeline_from_event(scenario_id, call_sid, event_type)
             update_call_meta(
                 scenario_id,
                 call_sid,
@@ -284,6 +391,10 @@ async def telnyx_events(request: Request):
                 extra={
                     "telephony_provider": "telnyx",
                     "telnyx_status": event_type,
+                    # Timestamp each distinct event_type so call_meta carries a Telnyx
+                    # event timeline (e.g. telnyx_event_call.answered_at) — useful for
+                    # correlating the opener against call.answered / media start.
+                    f"telnyx_event_{event_type}_at": _utc_now(),
                     "call_control_id": event_payload.get("call_control_id"),
                     "call_session_id": event_payload.get("call_session_id"),
                     "call_leg_id": event_payload.get("call_leg_id"),
@@ -364,6 +475,15 @@ async def api_ping():
     return {"ok": True}
 
 
+@app.get("/api/warmup")
+@app.post("/api/warmup")
+async def api_warmup():
+    from src.warmup import warm_runtime
+
+    report = warm_runtime()
+    return JSONResponse({"ready": bool(report.get("ready")), "report": report})
+
+
 @app.get("/api/scenarios")
 async def api_scenarios():
     result = []
@@ -399,15 +519,107 @@ def _last_verdict_for_scenario(scenario_id: int) -> str | None:
 
 
 @app.post("/api/run/{scenario_id}")
-async def api_run_scenario(scenario_id: int):
+async def api_run_scenario(scenario_id: int, test_target: bool = False):
     from src.caller import make_call
 
     scenario = get_scenario(scenario_id)
     if scenario is None:
         return JSONResponse({"error": f"Unknown scenario {scenario_id}"}, status_code=404)
     try:
-        call_sid = make_call(scenario_id)
+        call_sid = make_call(scenario_id, use_test_target=test_target)
         return JSONResponse({"call_sid": call_sid, "scenario_id": scenario_id})
+    except Exception as exc:
+        return JSONResponse({"error": str(exc)}, status_code=500)
+
+
+@app.get("/api/runs/{call_sid}/artifacts")
+async def api_run_artifacts(call_sid: str):
+    """Return latency_debug.json and startup_timeline.json for a specific call."""
+    for run_dir in Path("runs").glob(f"scenario_*_{call_sid}"):
+        return JSONResponse({
+            "latency_debug": _load_json(run_dir / "latency_debug.json"),
+            "startup_timeline": _load_json(run_dir / "startup_timeline.json"),
+        })
+    # Try without scenario prefix (sim runs)
+    for run_dir in Path("runs").glob(f"*{call_sid}*"):
+        return JSONResponse({
+            "latency_debug": _load_json(run_dir / "latency_debug.json"),
+            "startup_timeline": _load_json(run_dir / "startup_timeline.json"),
+        })
+    return JSONResponse({"latency_debug": None, "startup_timeline": None})
+
+
+def _find_run_dir(call_sid: str) -> Path | None:
+    for run_dir in Path("runs").glob(f"scenario_*_{call_sid}"):
+        return run_dir
+    for run_dir in Path("runs").glob(f"*{call_sid}*"):
+        return run_dir
+    return None
+
+
+@app.get("/api/runs/{call_sid}/recording")
+async def api_run_recording(call_sid: str, kind: str = "mp3"):
+    """Serve the call audio for download.
+
+    kind: "mp3" (mixed recording, default), "agent", or "patient" (live WAVs).
+    """
+    run_dir = _find_run_dir(call_sid)
+    if run_dir is None:
+        return JSONResponse({"error": "run not found"}, status_code=404)
+
+    candidates = {
+        "mp3": ("recording.mp3", "audio/mpeg"),
+        "agent": ("live_agent.wav", "audio/wav"),
+        "patient": ("live_patient.wav", "audio/wav"),
+    }
+    filename, media_type = candidates.get(kind, candidates["mp3"])
+    audio_path = run_dir / filename
+    # Fall back to the agent WAV if the mixed mp3 was never produced.
+    if not audio_path.exists() and kind == "mp3":
+        audio_path = run_dir / "live_agent.wav"
+        filename, media_type = "live_agent.wav", "audio/wav"
+    if not audio_path.exists():
+        return JSONResponse({"error": "no recording for this call"}, status_code=404)
+
+    return FileResponse(str(audio_path), media_type=media_type, filename=f"{run_dir.name}_{filename}")
+
+
+@app.get("/api/runs/{call_sid}/has-recording")
+async def api_run_has_recording(call_sid: str):
+    run_dir = _find_run_dir(call_sid)
+    if run_dir is None:
+        return JSONResponse({"mp3": False, "agent": False, "patient": False})
+    return JSONResponse({
+        "mp3": (run_dir / "recording.mp3").exists(),
+        "agent": (run_dir / "live_agent.wav").exists(),
+        "patient": (run_dir / "live_patient.wav").exists(),
+    })
+
+
+@app.post("/api/runs/{call_sid}/rejudge")
+async def api_rejudge(call_sid: str):
+    """Re-run the judge on a call's existing transcript (e.g. after an ERROR)."""
+    run_dir = _find_run_dir(call_sid)
+    if run_dir is None:
+        return JSONResponse({"error": "run not found"}, status_code=404)
+    transcript = _load_json(run_dir / "transcript_final.json") or _load_json(
+        run_dir / "transcript_live.json"
+    )
+    if not transcript or not transcript.get("turns"):
+        return JSONResponse(
+            {"error": "No transcript with conversation turns to judge for this call."},
+            status_code=400,
+        )
+    scenario_id = transcript.get("scenario_id")
+    if scenario_id is None:
+        meta = _load_json(run_dir / "call_meta.json") or {}
+        scenario_id = meta.get("scenario_id")
+    scenario = get_scenario(int(scenario_id)) if scenario_id is not None else None
+    if scenario is None:
+        return JSONResponse({"error": "Unknown scenario for this call."}, status_code=400)
+    try:
+        result = evaluate(transcript, scenario)  # save=True writes judge_output.json
+        return JSONResponse({"judge": result})
     except Exception as exc:
         return JSONResponse({"error": str(exc)}, status_code=500)
 
@@ -456,6 +668,41 @@ async def api_list_runs(scenario_id: int | None = None, call_sid: str | None = N
             "judge": judge,
         })
     return JSONResponse(runs)
+
+
+@app.post("/api/reset")
+async def api_reset_session():
+    """Archive existing runs and clear the bug report so the console is brand new.
+
+    Non-destructive: runs are moved into runs_archive/<timestamp>/ rather than
+    deleted, so captured transcripts and diagnostics are preserved.
+    """
+    import shutil
+
+    archived = 0
+    runs_dir = Path("runs")
+    run_dirs = [p for p in runs_dir.glob("*") if p.is_dir()] if runs_dir.exists() else []
+    if run_dirs:
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        archive_dir = Path("runs_archive") / stamp
+        archive_dir.mkdir(parents=True, exist_ok=True)
+        for run_dir in run_dirs:
+            try:
+                shutil.move(str(run_dir), str(archive_dir / run_dir.name))
+                archived += 1
+            except Exception as exc:
+                print(f"[DEBUG] reset: could not archive {run_dir.name}: {exc}")
+
+    report_path = Path("reports") / "bug_report.md"
+    if report_path.exists():
+        try:
+            report_path.unlink()
+        except Exception as exc:
+            print(f"[DEBUG] reset: could not remove report: {exc}")
+
+    ACTIVE_CALLS.clear()
+    CALL_STATUS.clear()
+    return JSONResponse({"ok": True, "archived_runs": archived})
 
 
 @app.post("/api/report")

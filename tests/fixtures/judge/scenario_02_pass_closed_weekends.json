@@ -1,0 +1,11 @@
+{
+  "scenario_id": 2,
+  "call_sid": "FIX02pass",
+  "speaker_A_is_patient": true,
+  "turns": [
+    {"speaker": "patient", "text": "Hi, can I come in this Saturday around 10am?", "start_ms": 1000},
+    {"speaker": "agent", "text": "I'm sorry, we're closed on weekends. The earliest I can offer is Monday at 9am.", "start_ms": 9000},
+    {"speaker": "patient", "text": "Okay, fine. Monday at 9 works.", "start_ms": 16000},
+    {"speaker": "agent", "text": "Great, you're all set for Monday at 9am.", "start_ms": 22000}
+  ]
+}
