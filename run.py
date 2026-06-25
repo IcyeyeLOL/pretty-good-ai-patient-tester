@@ -301,6 +301,72 @@ def run_one_scenario(scenario_id: int, use_test_target: bool = False) -> str | N
     return call_sid
 
 
+def _ngrok_public_url() -> str | None:
+    """Return the https public URL of a running ngrok tunnel to :8000, if any."""
+    import urllib.request
+
+    try:
+        with urllib.request.urlopen("http://localhost:4040/api/tunnels", timeout=2) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+    except Exception:
+        return None
+    tunnels = data.get("tunnels", [])
+    for tunnel in tunnels:
+        if tunnel.get("proto") == "https" and "8000" in tunnel.get("config", {}).get("addr", ""):
+            return tunnel.get("public_url")
+    for tunnel in tunnels:  # fall back to any https tunnel
+        if tunnel.get("proto") == "https":
+            return tunnel.get("public_url")
+    return None
+
+
+def _write_base_url(url: str) -> None:
+    """Persist BASE_URL to the environment and .env so the app/webhooks use it."""
+    os.environ["BASE_URL"] = url
+    env_path = Path(".env")
+    lines = env_path.read_text(encoding="utf-8").splitlines() if env_path.exists() else []
+    out, found = [], False
+    for line in lines:
+        if line.startswith("BASE_URL="):
+            out.append(f"BASE_URL={url}")
+            found = True
+        else:
+            out.append(line)
+    if not found:
+        out.append(f"BASE_URL={url}")
+    env_path.write_text("\n".join(out) + "\n", encoding="utf-8")
+
+
+def bring_up_tunnel() -> str | None:
+    """Ensure an ngrok tunnel to :8000 exists; write its URL to BASE_URL/.env.
+
+    Reuses a running tunnel if one is up; otherwise starts `ngrok http 8000` in the
+    background. Returns the public https URL or None if ngrok is unavailable.
+    """
+    import subprocess
+
+    url = _ngrok_public_url()
+    if url:
+        _write_base_url(url)
+        return url
+    try:
+        subprocess.Popen(
+            ["ngrok", "http", "8000"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except FileNotFoundError:
+        click.echo("ngrok not found on PATH. Install ngrok, or set BASE_URL in .env manually.", err=True)
+        return None
+    for _ in range(30):
+        time.sleep(0.5)
+        url = _ngrok_public_url()
+        if url:
+            _write_base_url(url)
+            return url
+    return None
+
+
 def load_judge_outputs() -> list[dict]:
     outputs = []
     for path in sorted(Path("runs").glob("scenario_*/judge_output.json")):
@@ -318,6 +384,12 @@ def load_judge_outputs() -> list[dict]:
 @click.option("--report", "report", is_flag=True, help="Generate bug report from completed runs.")
 @click.option("--server", "server_only", is_flag=True, help="Start the FastAPI server only.")
 @click.option(
+    "--up",
+    "up",
+    is_flag=True,
+    help="One command: auto-start ngrok, set BASE_URL, and launch the server + UI.",
+)
+@click.option(
     "--test-target",
     is_flag=True,
     help="Call VERIFIED_TEST_PHONE instead of the assessment number. Use only for Twilio trial testing.",
@@ -328,11 +400,14 @@ def main(
     list_scenarios: bool,
     report: bool,
     server_only: bool,
+    up: bool,
     test_target: bool,
 ) -> None:
-    selected = [scenario_id is not None, run_all, list_scenarios, report, server_only]
+    selected = [scenario_id is not None, run_all, list_scenarios, report, server_only, up]
     if sum(bool(item) for item in selected) != 1:
-        raise click.ClickException("Choose exactly one option: --scenario, --all, --list, --report, or --server.")
+        raise click.ClickException(
+            "Choose exactly one option: --up, --scenario, --all, --list, --report, or --server."
+        )
     if test_target and scenario_id is None:
         raise click.ClickException("--test-target can only be used with --scenario.")
 
@@ -348,6 +423,26 @@ def main(
 
         path = generate_bug_report(load_judge_outputs())
         click.echo(Path(path).read_text(encoding="utf-8"))
+        return
+
+    if up:
+        # Single-command bring-up: tunnel + BASE_URL + server, ready for the UI.
+        url = bring_up_tunnel()
+        if url:
+            click.echo(f"ngrok tunnel ready -> {url}")
+        else:
+            existing = os.environ.get("BASE_URL")
+            if existing:
+                click.echo(f"Using existing BASE_URL -> {existing}")
+            else:
+                raise click.ClickException(
+                    "No ngrok tunnel and no BASE_URL set. Start ngrok or set BASE_URL in .env."
+                )
+        validate_env(require_call_keys=False)
+        import uvicorn
+
+        click.echo("Open the console at http://localhost:8000  (Ctrl+C to stop)")
+        uvicorn.run("src.server:app", host="0.0.0.0", port=8000)
         return
 
     if server_only:

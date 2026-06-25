@@ -26,7 +26,35 @@ Python voice-call tester for the Pretty Good AI engineering challenge. It places
 | AssemblyAI | Optional final transcript path for provider recordings |
 | pytest | Unit, offline judge, dry-run, and pipeline tests |
 
-## Quickstart
+## Run It (single command)
+
+After the one-time setup below, the entire system starts with **one line**. It
+auto-starts the ngrok tunnel, writes `BASE_URL` for you, and launches the
+server + web console:
+
+```powershell
+.\.venv\Scripts\python.exe run.py --up
+```
+
+Then open the console and drive everything from the UI (pick a scenario, click
+**Run Call**, watch the live transcript, judge verdict, latency, and download
+recordings):
+
+```text
+http://localhost:8000
+```
+
+> `--up` needs `ngrok` on your PATH. If you'd rather manage the tunnel yourself,
+> run `ngrok http 8000`, put the HTTPS URL in `.env` as `BASE_URL`, then start
+> just the server with `run.py --server`.
+
+CLI-only alternative (no UI) — place one call straight from the terminal:
+
+```powershell
+.\.venv\Scripts\python.exe run.py --scenario 1 --test-target
+```
+
+## One-Time Setup
 
 ### 1. Install dependencies
 
@@ -41,19 +69,15 @@ python -m venv .venv
 Copy-Item .env.example .env
 ```
 
-Fill in `.env`. Keep the final assessment number locked:
+Fill in `.env`. Keep the final assessment number locked, and set your verified
+number for development calls:
 
 ```text
 TARGET_PHONE=+18054398008
-```
-
-For local testing, use your verified phone number:
-
-```text
 VERIFIED_TEST_PHONE=+1XXXXXXXXXX
 ```
 
-Core required keys for the Telnyx path:
+Required keys (Telnyx path):
 
 ```text
 TELEPHONY_PROVIDER=telnyx
@@ -69,40 +93,20 @@ DEEPGRAM_API_KEY=...
 CARTESIA_API_KEY=...
 CARTESIA_MODEL=sonic-2
 ASSEMBLYAI_API_KEY=...
-
-OPENING_DELAY_SECONDS=0.5
-BASE_URL=https://your-public-ngrok-url
 ```
 
-Do not commit `.env`; it is ignored by git.
+`BASE_URL` is filled in automatically by `run.py --up`. Set it manually only if
+you manage ngrok yourself. Do not commit `.env`; it is git-ignored.
 
-### 3. Start ngrok
-
-In one terminal:
+### 3. Start everything
 
 ```powershell
-ngrok http 8000
+.\.venv\Scripts\python.exe run.py --up
 ```
 
-Copy the HTTPS URL into `.env` without a trailing slash:
-
-```text
-BASE_URL=https://abc123.ngrok-free.app
-```
-
-### 4. Run a test call
-
-Use `--test-target` while iterating so the call goes to `VERIFIED_TEST_PHONE`:
-
-```powershell
-.\.venv\Scripts\python.exe run.py --scenario 1 --test-target
-```
-
-Run the assessment target only when ready:
-
-```powershell
-.\.venv\Scripts\python.exe run.py --scenario 1
-```
+That's it — open `http://localhost:8000`. Use `--test-target` from the CLI (or
+the "test target" toggle in the UI) so development calls go to
+`VERIFIED_TEST_PHONE`; run the assessment target `+18054398008` only when ready.
 
 ## Common Commands
 
@@ -124,7 +128,13 @@ Run all scenarios:
 .\.venv\Scripts\python.exe run.py --all
 ```
 
-Start only the FastAPI server:
+Start everything (tunnel + server + UI) with one command:
+
+```powershell
+.\.venv\Scripts\python.exe run.py --up
+```
+
+Start only the FastAPI server (you manage ngrok / BASE_URL yourself):
 
 ```powershell
 .\.venv\Scripts\python.exe run.py --server
@@ -159,9 +169,9 @@ The project includes 10 scenario cards in `scenarios/scenario_cards.py`.
 | 1 | Basic Appointment Scheduling | Required intake fields and appointment confirmation |
 | 2 | Weekend Hours Hallucination | Refusing weekend appointments and offering weekdays |
 | 3 | Cancel and Reschedule | Cancellation state plus rescheduling pivot |
-| 4 | Urgent Symptoms | Emergency escalation for chest symptoms |
+| 4 | Urgent Symptoms | Emergency escalation for red-flag back symptoms (leg numbness + loss of bladder control) |
 | 5 | Third-Party PHI | Identity/relationship verification before disclosure |
-| 6 | Medication Refill | Escalating concerning side effects |
+| 6 | Medication Refill | Escalating a possible blood clot (swollen, red, warm calf) |
 | 7 | Insurance Uncertainty | Avoiding unverifiable coverage claims |
 | 8 | Office Location | Avoiding invented location details |
 | 9 | Multi-Intent Patient | Context tracking across several requests |
@@ -307,16 +317,16 @@ If the caller hears the tone, Telnyx playback works and the issue is TTS/timing.
 
 ## UI
 
-Start the server and open the root page:
+Bring up everything and open the root page:
 
 ```powershell
-.\.venv\Scripts\python.exe run.py --server
+.\.venv\Scripts\python.exe run.py --up
 ```
 
 Then visit:
 
 ```text
-http://127.0.0.1:8000
+http://localhost:8000
 ```
 
 The UI exposes scenarios, run history, transcripts, judge results, MP3 playback/download, and debug artifacts.
@@ -326,7 +336,7 @@ The UI exposes scenarios, run history, transcripts, judge results, MP3 playback/
 - `.env` is filled locally and never committed.
 - `TARGET_PHONE` is exactly `+18054398008`.
 - `VERIFIED_TEST_PHONE` is used for development calls.
-- ngrok is running and `BASE_URL` matches the public HTTPS URL.
+- `run.py --up` brings up ngrok + server and sets `BASE_URL` automatically.
 - Offline tests pass.
 - At least one live call produces `recording.mp3`, `transcript_live.json`, and `judge_output.json`.
 - The bug report is generated with `run.py --report`.
